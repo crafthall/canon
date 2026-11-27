@@ -1,9 +1,9 @@
 # Getting started
 
-The package's `hub` command does steps 1 and 5 in any git repository. It is not published to a registry; install it from its git repository, pinned to a release tag, and run the bin:
+The package's `canon` command does steps 1 and 5 in any git repository. It is not published to a registry; install it from its git repository, pinned to a release tag, and run the bin:
 
 ```bash
-npm install --save-dev "git+https://github.com/<owner>/crafthall-canon.git#v0.1.1"
+npm install --save-dev "git+https://github.com/crafthall/canon.git#v0.2.1"
 npx canon check --all
 ```
 

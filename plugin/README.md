@@ -8,7 +8,7 @@
   - `bootstrap` – draft a hub from the repository, every sentence with a source or marked as a hypothesis;
   - `everything-as-code` – in every change, update the hub pages the change made untrue and the changelog;
   - `hub-check` – the check, then a semantic read of the pages against each other and the code.
-- **Runner** `scripts/hub.mjs` – the `hub` command line (`check`, `new`, `init`) for Node ≥ 20 with no dependencies: a launcher for `scripts/hub-core.mjs`, the core bundled from `src/` (`src/plugin-runner.ts` and `src/cli.ts`). `template/` is the page template `canon new` and `canon init` use in a repository without its own `docs/product-hub/_template/`.
+- **Runner** `scripts/hub.mjs` – the `canon` command line (`check`, `new`, `init`) for Node ≥ 20 with no dependencies: a launcher for `scripts/hub-core.mjs`, the core bundled from `src/` (`src/plugin-runner.ts` and `src/cli.ts`). `template/` is the page template `canon new` and `canon init` use in a repository without its own `docs/product-hub/_template/`.
 
 ## Source and build
 

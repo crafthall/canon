@@ -11,7 +11,7 @@ Private repository, no outside collaborators, nothing published. Write everythin
 
 ```bash
 npm ci            # Node 24 (the sources run with Node's type stripping); installed copies need Node >= 20.11
-npm run build     # dist/: JS + .d.ts for the exports and the `hub` bin
+npm run build     # dist/: JS + .d.ts for the exports and the `canon` bin
 npm test          # unit, property, differential and end-to-end tests
 npm run typecheck
 ```
@@ -43,12 +43,12 @@ no build step and no install script:
 
 ```bash
 npm run release -- 0.1.1      # clean tree on main: test, build, version bump commit on main, then a release
-                              # commit with dist/ on top of it (not on main), tag v0.1.1 on that commit
-git push origin main v0.1.1   # push main and the tag
-npm run test:clean-install -- --ref v0.1.1   # the clean-install end-to-end test against the pushed tag
+                              # commit with dist/ on top of it (not on main), tag v0.2.1 on that commit
+git push origin main v0.2.1   # push main and the tag
+npm run test:clean-install -- --ref v0.2.1   # the clean-install end-to-end test against the pushed tag
 ```
 
-Consumers pin the tag: `"@crafthall/canon": "git+https://github.com/crafthall/canon.git#v0.1.1"`.
+Consumers pin the tag: `"@crafthall/canon": "git+https://github.com/crafthall/canon.git#v0.2.1"`.
 A tag is never moved; a fix is a new tag.
 
 ## Design records

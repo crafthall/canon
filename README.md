@@ -4,12 +4,12 @@
 
 This repository is the **framework**: the core package (page layout, lifecycle stages, documentation matrix, health checks, completeness, the readers that build a product from a hub folder, the structure check, the scaffold and the versioned `--json` report – pure TypeScript with no runtime dependencies), the `canon` CLI, the page template, the Claude Code plugin with its skills, the framework docs and a worked example. Every file read goes through one `HubSource`; the disk source is the separate entry `@crafthall/canon/node`, so the main entry runs anywhere.
 
-**Status (2026-11-27): 0.2.0, public, MIT.** Renamed from Crafthall Product Hub (`@crafthall/product-hub`, CLI `hub`) in 0.2.0. Installed as a git dependency pinned to a release tag (no registry); each tag carries a built `dist/` (see [CONTRIBUTING.md](CONTRIBUTING.md) "Releases").
+**Status (2026-11-27): 0.2.1, public, MIT.** Renamed from Crafthall Product Hub (`@crafthall/product-hub`, CLI `hub`) in 0.2.0. Installed as a git dependency pinned to a release tag (no registry); each tag carries a built `dist/` (see [CONTRIBUTING.md](CONTRIBUTING.md) "Releases").
 
 ## Install
 
 ```bash
-npm install --save-dev "git+https://github.com/crafthall/canon.git#v0.2.0"
+npm install --save-dev "git+https://github.com/crafthall/canon.git#v0.2.1"
 npx canon new my-product --stage validation --name "My Product" --pitch "One line"
 npx canon check --all
 ```
@@ -74,7 +74,7 @@ Options: `plans` (business plans the host loaded), `render(md, file)` (Markdown 
 
 ## CLI
 
-The package's bin `hub` (`src/cli.ts`, also importable as `@crafthall/canon/cli`):
+The package's bin `canon` (`src/cli.ts`, also importable as `@crafthall/canon/cli`):
 
 ```bash
 canon new <id> --stage idea|validation|building|live [--name "<Name>"] [--pitch "<one line>"] [--team <id>] \
