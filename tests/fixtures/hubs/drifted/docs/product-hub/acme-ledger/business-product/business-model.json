@@ -1,0 +1,10 @@
+{
+  "product": "acme-ledger",
+  "scenarios": [
+    {
+      "id": "base",
+      "monthlyPrice": 9,
+      "customersMonth12": 40
+    }
+  ]
+}

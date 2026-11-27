@@ -1,0 +1,1 @@
+Free tier: keep or drop? Decided in ADR-0004.

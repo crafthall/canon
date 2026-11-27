@@ -1,0 +1,5 @@
+node_modules/
+# Build output: committed only on release tags (scripts/release.mjs), never on main.
+dist/
+*.tsbuildinfo
+.DS_Store

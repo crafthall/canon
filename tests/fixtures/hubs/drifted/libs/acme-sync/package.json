@@ -1,0 +1,8 @@
+{
+  "private": true,
+  "nx": {
+    "tags": [
+      "product:acme-sync"
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "name": "crafthall-canon",
+  "displayName": "Crafthall Canon",
+  "version": "0.2.0",
+  "description": "One documentation folder per product (docs/product-hub/<id>/): start it, draft it from the repository, keep it current in every change, and check it with /crafthall-canon:check – what is missing, stale or inconsistent. Runs on this machine: no network, no account, works without Crafthall HQ.",
+  "author": {
+    "name": "Crafthall"
+  },
+  "keywords": [
+    "documentation",
+    "product",
+    "docs-as-code",
+    "hub"
+  ],
+  "metadata": {
+    "skills": [
+      "bootstrap",
+      "everything-as-code",
+      "hub-check",
+      "project-init"
+    ],
+    "runner": "scripts/hub.mjs",
+    "source": "@crafthall/canon (built by scripts/build-plugin.mjs)",
+    "commands": [
+      "check"
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "fixture": "empty",
+  "exitCode": 0,
+  "ok": true,
+  "counts": {
+    "products": 0,
+    "problems": 0,
+    "findings": 0
+  },
+  "problems": [],
+  "products": [],
+  "errors": []
+}

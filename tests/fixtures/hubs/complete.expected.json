@@ -1,0 +1,22 @@
+{
+  "fixture": "complete",
+  "exitCode": 0,
+  "ok": true,
+  "counts": {
+    "products": 1,
+    "problems": 0,
+    "findings": 0
+  },
+  "problems": [],
+  "products": [
+    {
+      "id": "acme-ledger",
+      "stage": "development",
+      "completeness": 1,
+      "done": 16,
+      "total": 16,
+      "findings": []
+    }
+  ],
+  "errors": []
+}

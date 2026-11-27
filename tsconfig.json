@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "isolatedModules": true,
+    "lib": ["es2023"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "target": "es2022",
+    "strict": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "skipLibCheck": true,
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "noEmit": true,
+    "types": ["node", "vitest/importMeta"]
+  },
+  "include": ["src/**/*.ts", "tests/**/*.ts", "tests/**/*.d.mts", "test-kit/**/*.ts", "vitest.config.mts", "vitest.claude.config.mts"]
+}

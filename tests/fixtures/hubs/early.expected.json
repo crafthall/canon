@@ -1,0 +1,22 @@
+{
+  "fixture": "early",
+  "exitCode": 0,
+  "ok": true,
+  "counts": {
+    "products": 1,
+    "problems": 0,
+    "findings": 0
+  },
+  "problems": [],
+  "products": [
+    {
+      "id": "acme-sprout",
+      "stage": "idea",
+      "completeness": 1,
+      "done": 1,
+      "total": 1,
+      "findings": []
+    }
+  ],
+  "errors": []
+}

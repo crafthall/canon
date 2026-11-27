@@ -1,0 +1,74 @@
+{
+  "name": "@crafthall/canon",
+  "version": "0.2.0",
+  "license": "MIT",
+  "type": "module",
+  "description": "Crafthall Canon: one documentation folder per product – the page layout in three sections, the eight lifecycle stages, the documentation matrix (which page each stage needs), the health checks, the completeness count, the readers that build a product from a hub folder through one file source, the structure check, the scaffold and the versioned --json report. The core has no dependencies; the disk source and the writer are the ./node entry, the `canon` CLI (canon new, canon init, canon check) the ./cli entry and bin; the shared fixture hubs are ./testing; the standalone Claude Code plugin is in plugin/.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/crafthall/canon.git"
+  },
+  "engines": {
+    "node": ">=20.11"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "canon": "./dist/cli.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./node": {
+      "types": "./dist/node.d.ts",
+      "default": "./dist/node.js"
+    },
+    "./cli": {
+      "types": "./dist/cli.d.ts",
+      "default": "./dist/cli.js"
+    },
+    "./testing": {
+      "types": "./dist/testing.d.ts",
+      "default": "./dist/testing.js"
+    },
+    "./testing/mutations": {
+      "types": "./tests/fixtures/mutations.d.mts",
+      "default": "./tests/fixtures/mutations.mjs"
+    },
+    "./schema/hub-check.schema.json": "./schema/hub-check.schema.json",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist/",
+    "template/",
+    "schema/",
+    "plugin/",
+    "docs/",
+    "tests/fixtures/hubs/",
+    "tests/fixtures/mutations.mjs",
+    "tests/fixtures/mutations.d.mts",
+    "README.md",
+    "CONTRIBUTING.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "build:plugin": "node scripts/build-plugin.mjs",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "test:plugin-install": "vitest run --config vitest.claude.config.mts",
+    "test:clean-install": "node scripts/clean-install-e2e.mjs",
+    "replay": "node examples/pricing-reversal/replay.mjs",
+    "release": "node scripts/release.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "ajv": "^6.15.0",
+    "esbuild": "0.28.2",
+    "fast-check": "4.10.2",
+    "typescript": "~6.0.3",
+    "vitest": "~5.1.0"
+  }
+}

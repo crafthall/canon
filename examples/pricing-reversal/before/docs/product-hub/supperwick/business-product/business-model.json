@@ -1,0 +1,10 @@
+{
+  "product": "supperwick",
+  "scenarios": [
+    {
+      "id": "base",
+      "monthlyPrice": 4,
+      "customersMonth12": 60
+    }
+  ]
+}

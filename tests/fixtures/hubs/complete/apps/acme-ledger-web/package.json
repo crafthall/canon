@@ -1,0 +1,9 @@
+{
+  "private": true,
+  "nx": {
+    "tags": [
+      "product:acme-ledger",
+      "role:primary"
+    ]
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "crafthall-canon-dev",
+  "description": "Development marketplace of this repository: installs the plugin from ./plugin for the plugin-install end-to-end test. Not published.",
+  "owner": {
+    "name": "Crafthall"
+  },
+  "plugins": [
+    {
+      "name": "crafthall-canon",
+      "source": "./plugin",
+      "description": "Crafthall Canon: one documentation folder per product. Skills to start a hub (project-init), draft it from the repository (bootstrap), keep it current in every change (everything-as-code) and read it for contradictions (hub-check), plus /crafthall-canon:check – what is missing, stale or inconsistent. Runs on this machine: no network, no account."
+    }
+  ]
+}

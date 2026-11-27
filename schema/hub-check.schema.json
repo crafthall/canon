@@ -1,0 +1,481 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Crafthall Canon – canon check --json report",
+  "description": "Output of `canon check <id>|--all --json` (@crafthall/canon, src/report.ts), schemaVersion 1. A breaking change (a removed or renamed field, a changed type or meaning) raises schemaVersion; an added field does not, so readers (the Claude Code plugin, the HQ module – ADR-0002) ignore fields they do not know. The schema lists every field (additionalProperties false) so the package test catches a field added without updating it. Exit codes: 0 = no problem (ok true), 1 = problems found (ok false; a project package.json that is not JSON is the problem rule package-json), 2 = usage error and 3 = internal error – with 2 and 3 no report is printed.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "tool",
+    "hubDir",
+    "scope",
+    "ok",
+    "counts",
+    "problems",
+    "products",
+    "errors"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "integer",
+      "const": 1
+    },
+    "tool": {
+      "type": "string",
+      "const": "hub"
+    },
+    "hubDir": {
+      "type": "string"
+    },
+    "scope": {
+      "type": "string"
+    },
+    "ok": {
+      "type": "boolean"
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "products",
+        "problems",
+        "findings"
+      ],
+      "properties": {
+        "products": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "problems": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "findings": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "problems": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "rule",
+          "file",
+          "message"
+        ],
+        "properties": {
+          "rule": {
+            "type": "string",
+            "enum": [
+              "layout",
+              "front-matter",
+              "link",
+              "lifecycle",
+              "status",
+              "feature",
+              "catalog",
+              "adr-index",
+              "app",
+              "topic",
+              "tagged-without-hub",
+              "reserved-id",
+              "hub-folder",
+              "package-json"
+            ]
+          },
+          "file": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "products": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "dir",
+          "name",
+          "status",
+          "stage",
+          "stageLabel",
+          "team",
+          "updated",
+          "pitch",
+          "plan",
+          "completeness",
+          "health",
+          "featureCounts",
+          "features",
+          "adrs",
+          "launchTasks",
+          "candidates",
+          "findings"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          },
+          "dir": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "stage": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "idea",
+              "validation",
+              "business-plan",
+              "mvp",
+              "development",
+              "launch",
+              "monetize",
+              "operate",
+              null
+            ]
+          },
+          "stageLabel": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "team": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "updated": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "pitch": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "plan": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "id",
+                  "title"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  }
+                }
+              }
+            ]
+          },
+          "completeness": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 1
+          },
+          "health": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "assessed",
+              "done",
+              "total",
+              "rows"
+            ],
+            "properties": {
+              "assessed": {
+                "type": "boolean"
+              },
+              "done": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "total": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "rows": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "id",
+                    "label",
+                    "level",
+                    "state",
+                    "applicable",
+                    "findings"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "label": {
+                      "type": "string"
+                    },
+                    "level": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "enum": [
+                        "R",
+                        "C",
+                        "O",
+                        "-",
+                        null
+                      ]
+                    },
+                    "state": {
+                      "type": "string",
+                      "enum": [
+                        "ok",
+                        "review",
+                        "missing",
+                        "extra",
+                        "not-triggered",
+                        "not-due"
+                      ]
+                    },
+                    "applicable": {
+                      "type": "boolean"
+                    },
+                    "findings": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "featureCounts": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "total",
+              "built",
+              "partial",
+              "building",
+              "planned",
+              "removed",
+              "unknown"
+            ],
+            "properties": {
+              "total": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "built": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "partial": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "building": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "planned": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "removed": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "unknown": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          },
+          "features": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "slug",
+                "file",
+                "title",
+                "status",
+                "updated"
+              ],
+              "properties": {
+                "slug": {
+                  "type": "string"
+                },
+                "file": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "updated": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            }
+          },
+          "adrs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "number",
+                "label",
+                "title",
+                "status",
+                "date",
+                "file"
+              ],
+              "properties": {
+                "number": {
+                  "type": "integer"
+                },
+                "label": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "date": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "file": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "launchTasks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "name",
+                "neededFor",
+                "status",
+                "owner",
+                "issue"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "neededFor": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "owner": {
+                  "type": "boolean"
+                },
+                "issue": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "candidates": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "findings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "area",
+                "text",
+                "file"
+              ],
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "missing",
+                    "inconsistent",
+                    "stale"
+                  ]
+                },
+                "area": {
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string"
+                },
+                "file": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
