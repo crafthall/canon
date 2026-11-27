@@ -5,7 +5,7 @@
  * Crafthall HQ is found, in this order: `--hq <file>` (a host's own copy, e.g. Spark's committed plugin bundle);
  * the installed Claude Code plugin `crafthall-hq` (`$CLAUDE_CONFIG_DIR` or `~/.claude`, `plugins/installed_plugins.json`
  * → its `.mcp.json` entry script); `crafthall-hq` on PATH. None → the step is skipped with a message.
- * It always runs **offline**: every `CRAFTHALL_HQ_*` / `ATHENA_*` setting (key, engine, consent) is removed from its
+ * It always runs **offline**: every `CRAFTHALL_HQ_*` setting (key, engine, consent) is removed from its
  * environment and its config folder is a fresh empty temporary folder, so no sign-in session exists and HQ's mode
  * rule (`checkMode`: no session, engine, key or store → offline) picks the local check; a result that does not say
  * `offline: true` is refused. Nothing is sent and nothing is stored.
@@ -27,7 +27,7 @@ export interface HqLocation {
   label: string;
 }
 
-/** The plugin's entry script from its `.mcp.json` (`node ${CLAUDE_PLUGIN_ROOT}/scripts/athena.mjs mcp`), else scripts/athena.mjs. */
+/** The plugin's entry script from its `.mcp.json` (`node ${CLAUDE_PLUGIN_ROOT}/scripts/crafthall-hq.mjs mcp`), else scripts/crafthall-hq.mjs. */
 function pluginScript(installPath: string): string | null {
   try {
     const mcp = JSON.parse(readFileSync(join(installPath, '.mcp.json'), 'utf8')) as { mcpServers?: Record<string, { command?: string; args?: string[] }> };
@@ -41,7 +41,7 @@ function pluginScript(installPath: string): string | null {
   } catch {
     /* no or unreadable .mcp.json: fall through */
   }
-  const f = join(installPath, 'scripts', 'athena.mjs');
+  const f = join(installPath, 'scripts', 'crafthall-hq.mjs');
   return existsSync(f) ? f : null;
 }
 
@@ -77,7 +77,7 @@ export function findHq({ flag = null, env = process.env, cwd = process.cwd() }: 
 /** The environment HQ runs in: every HQ setting removed, a fresh config folder (no sign-in session → offline). */
 export function offlineHqEnv(env: NodeJS.ProcessEnv, configDir: string): NodeJS.ProcessEnv {
   const out: NodeJS.ProcessEnv = {};
-  for (const [k, v] of Object.entries(env)) if (!k.startsWith('CRAFTHALL_HQ_') && !k.startsWith('ATHENA_')) out[k] = v;
+  for (const [k, v] of Object.entries(env)) if (!k.startsWith('CRAFTHALL_HQ_')) out[k] = v;
   out.CRAFTHALL_HQ_CONFIG_DIR = configDir;
   return out;
 }
@@ -86,7 +86,7 @@ interface HqJson {
   verdict?: unknown;
   exitCode?: unknown;
   offline?: unknown;
-  scope?: { athenaVersion?: unknown; agents?: unknown };
+  scope?: { hqVersion?: unknown; agents?: unknown };
   result?: { rulesBuild?: unknown; quality?: { findings?: { title?: unknown; evidence?: { file?: unknown; line?: unknown }[] }[] } };
 }
 
@@ -108,7 +108,7 @@ export function hqOutcome(status: number | null, stdout: string, stderr: string)
     const e = (f.evidence || [])[0];
     return `${String(f.title ?? 'hint')}${e?.file ? ` – ${String(e.file)}${e.line != null ? `:${String(e.line)}` : ''}` : ''}`;
   });
-  return { kind: 'checked', exitCode: status as 0 | 1, verdict: j.verdict, version: str(j.scope?.athenaVersion), rulesBuild: str(j.result?.rulesBuild), agents: typeof j.scope?.agents === 'number' ? j.scope.agents : null, hints };
+  return { kind: 'checked', exitCode: status as 0 | 1, verdict: j.verdict, version: str(j.scope?.hqVersion), rulesBuild: str(j.result?.rulesBuild), agents: typeof j.scope?.agents === 'number' ? j.scope.agents : null, hints };
 }
 
 /** Runs the HQ team check on `root`, offline. */
