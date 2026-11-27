@@ -1,6 +1,6 @@
 # Page formats for a drafted hub
 
-Folder: `docs/product-hub/<id>/`. File and folder names are fixed and lowercase kebab-case; a file not listed here fails the hub check. `<Name>` is the product's display name (from the manifest or README – cite it); `<date>` is today (YYYY-MM-DD).
+Folder: `docs/crafthall/canon/<id>/`. File and folder names are fixed and lowercase kebab-case; a file not listed here fails the hub check. `<Name>` is the product's display name (from the manifest or README – cite it); `<date>` is today (YYYY-MM-DD).
 
 ## Front matter (every Markdown page)
 

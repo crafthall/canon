@@ -10,68 +10,68 @@
   "problems": [
     {
       "rule": "front-matter",
-      "file": "docs/product-hub/acme-ledger/business-product/features/exports.md",
-      "message": "docs/product-hub/acme-ledger/business-product/features/exports.md: front matter says product \"acme-orbit\" in folder \"acme-ledger\""
+      "file": "docs/crafthall/canon/acme-ledger/business-product/features/exports.md",
+      "message": "docs/crafthall/canon/acme-ledger/business-product/features/exports.md: front matter says product \"acme-orbit\" in folder \"acme-ledger\""
     },
     {
       "rule": "link",
-      "file": "docs/product-hub/acme-ledger/business-product/overview.md",
-      "message": "docs/product-hub/acme-ledger/business-product/overview.md: broken link \"pricing.md\""
+      "file": "docs/crafthall/canon/acme-ledger/business-product/overview.md",
+      "message": "docs/crafthall/canon/acme-ledger/business-product/overview.md: broken link \"pricing.md\""
     },
     {
       "rule": "layout",
-      "file": "docs/product-hub/acme-ledger/business-product/pricing-notes.txt",
-      "message": "docs/product-hub/acme-ledger/business-product/pricing-notes.txt: file not in the product hub layout"
+      "file": "docs/crafthall/canon/acme-ledger/business-product/pricing-notes.txt",
+      "message": "docs/crafthall/canon/acme-ledger/business-product/pricing-notes.txt: file not in the product hub layout"
     },
     {
       "rule": "lifecycle",
-      "file": "docs/product-hub/acme-ledger",
-      "message": "docs/product-hub/acme-ledger: AI and development workflow is required at Development – add ai-development-workflow/agent-instructions.md + ai-development-workflow/documentation-rules.md + ai-development-workflow/definition-of-done.md + ai-development-workflow/documentation-skills.md"
+      "file": "docs/crafthall/canon/acme-ledger",
+      "message": "docs/crafthall/canon/acme-ledger: AI and development workflow is required at Development – add ai-development-workflow/agent-instructions.md + ai-development-workflow/documentation-rules.md + ai-development-workflow/definition-of-done.md + ai-development-workflow/documentation-skills.md"
     },
     {
       "rule": "catalog",
-      "file": "docs/product-hub/acme-ledger/business-product/features/audit-log.md",
-      "message": "docs/product-hub/acme-ledger/business-product/features/audit-log.md: not in the feature catalog (business-product/features/README.md)"
+      "file": "docs/crafthall/canon/acme-ledger/business-product/features/audit-log.md",
+      "message": "docs/crafthall/canon/acme-ledger/business-product/features/audit-log.md: not in the feature catalog (business-product/features/README.md)"
     },
     {
       "rule": "feature",
-      "file": "docs/product-hub/acme-ledger/business-product/features/team-seats.md",
-      "message": "docs/product-hub/acme-ledger/business-product/features/team-seats.md: feature status \"shipped\" – use one of specified, building, built, partial, later, removed"
+      "file": "docs/crafthall/canon/acme-ledger/business-product/features/team-seats.md",
+      "message": "docs/crafthall/canon/acme-ledger/business-product/features/team-seats.md: feature status \"shipped\" – use one of specified, building, built, partial, later, removed"
     },
     {
       "rule": "adr-index",
-      "file": "docs/product-hub/acme-ledger/architecture-engineering/decisions/0003-browser-storage.md",
-      "message": "docs/product-hub/acme-ledger/architecture-engineering/decisions/0003-browser-storage.md: not linked from the decisions index (architecture-engineering/decisions/README.md)"
+      "file": "docs/crafthall/canon/acme-ledger/architecture-engineering/decisions/0003-browser-storage.md",
+      "message": "docs/crafthall/canon/acme-ledger/architecture-engineering/decisions/0003-browser-storage.md: not linked from the decisions index (architecture-engineering/decisions/README.md)"
     },
     {
       "rule": "app",
       "file": "apps/acme-ledger-web/package.json",
-      "message": "apps/acme-ledger-web/package.json: named in docs/product-hub/acme-ledger/README.md but has no \"product:acme-ledger\" Nx tag (add it to \"nx\": { \"tags\" } – Canon docs, layout.md \"App tags\")"
+      "message": "apps/acme-ledger-web/package.json: named in docs/crafthall/canon/acme-ledger/README.md but has no \"product:acme-ledger\" Nx tag (add it to \"nx\": { \"tags\" } – Canon docs, layout.md \"App tags\")"
     },
     {
       "rule": "topic",
-      "file": "docs/product-hub/acme-ledger",
-      "message": "docs/product-hub/acme-ledger: topic \"pricing\" is a main section in business-product/go-to-market.md and business-product/monetization.md – keep it in one page and link from the others"
+      "file": "docs/crafthall/canon/acme-ledger",
+      "message": "docs/crafthall/canon/acme-ledger: topic \"pricing\" is a main section in business-product/go-to-market.md and business-product/monetization.md – keep it in one page and link from the others"
     },
     {
       "rule": "status",
-      "file": "docs/product-hub/acme-orbit/README.md",
-      "message": "docs/product-hub/acme-orbit/README.md: status \"beta\" is not one of idea, validation, building, live, paused, retired"
+      "file": "docs/crafthall/canon/acme-orbit/README.md",
+      "message": "docs/crafthall/canon/acme-orbit/README.md: status \"beta\" is not one of idea, validation, building, live, paused, retired"
     },
     {
       "rule": "reserved-id",
-      "file": "docs/product-hub/framework/",
-      "message": "docs/product-hub/framework/: \"framework\" is a reserved name (the hub viewer uses it for its own page, not a product) – rename the product folder"
+      "file": "docs/crafthall/canon/framework/",
+      "message": "docs/crafthall/canon/framework/: \"framework\" is a reserved name (the hub viewer uses it for its own page, not a product) – rename the product folder"
     },
     {
       "rule": "hub-folder",
-      "file": "docs/product-hub/notes.md",
-      "message": "docs/product-hub/notes.md: only README.md and product folders belong in docs/product-hub/"
+      "file": "docs/crafthall/canon/notes.md",
+      "message": "docs/crafthall/canon/notes.md: only README.md and product folders belong in docs/crafthall/canon/"
     },
     {
       "rule": "tagged-without-hub",
       "file": "libs/acme-sync/package.json",
-      "message": "libs/acme-sync/package.json: tagged product:acme-sync, but docs/product-hub/acme-sync/README.md does not exist – create it with canon new acme-sync"
+      "message": "libs/acme-sync/package.json: tagged product:acme-sync, but docs/crafthall/canon/acme-sync/README.md does not exist – create it with canon new acme-sync"
     },
     {
       "rule": "package-json",
@@ -91,73 +91,73 @@
           "kind": "inconsistent",
           "area": "catalog",
           "text": "“Free tier” is removed in its file but built in the feature table.",
-          "file": "docs/product-hub/acme-ledger/business-product/features/free-tier.md"
+          "file": "docs/crafthall/canon/acme-ledger/business-product/features/free-tier.md"
         },
         {
           "kind": "missing",
           "area": "catalog",
           "text": "“Audit log” has a feature file but no row in the feature table.",
-          "file": "docs/product-hub/acme-ledger/business-product/features/audit-log.md"
+          "file": "docs/crafthall/canon/acme-ledger/business-product/features/audit-log.md"
         },
         {
           "kind": "inconsistent",
           "area": "catalog",
           "text": "“Exports” says product “acme-orbit”, not “acme-ledger”.",
-          "file": "docs/product-hub/acme-ledger/business-product/features/exports.md"
+          "file": "docs/crafthall/canon/acme-ledger/business-product/features/exports.md"
         },
         {
           "kind": "inconsistent",
           "area": "catalog",
           "text": "“Team seats” has status “shipped”; use one of specified, building, built, partial, later, removed and put the detail in the text.",
-          "file": "docs/product-hub/acme-ledger/business-product/features/team-seats.md"
+          "file": "docs/crafthall/canon/acme-ledger/business-product/features/team-seats.md"
         },
         {
           "kind": "inconsistent",
           "area": "adr",
           "text": "ADR-0002 has status “approved”; use one of proposed, accepted, superseded, rejected.",
-          "file": "docs/product-hub/acme-ledger/architecture-engineering/decisions/0002-csv-only.md"
+          "file": "docs/crafthall/canon/acme-ledger/architecture-engineering/decisions/0002-csv-only.md"
         },
         {
           "kind": "inconsistent",
           "area": "adr",
           "text": "ADR-0004 supersedes ADR-0001, but ADR-0001 does not name it as successor.",
-          "file": "docs/product-hub/acme-ledger/architecture-engineering/decisions/0001-free-tier.md"
+          "file": "docs/crafthall/canon/acme-ledger/architecture-engineering/decisions/0001-free-tier.md"
         },
         {
           "kind": "missing",
           "area": "business-plan",
-          "text": "README names business plan “acme-ledger-2025”, which was not found (docs/product-hub/acme-ledger/business-product/business-plan.md).",
-          "file": "docs/product-hub/acme-ledger/README.md"
+          "text": "README names business plan “acme-ledger-2025”, which was not found (docs/crafthall/canon/acme-ledger/business-product/business-plan.md).",
+          "file": "docs/crafthall/canon/acme-ledger/README.md"
         },
         {
           "kind": "inconsistent",
           "area": "roadmap",
           "text": "Launch task “Announce the free tier” has status “blocked”; start it with open, in progress or done.",
-          "file": "docs/product-hub/acme-ledger/business-product/roadmap.md"
+          "file": "docs/crafthall/canon/acme-ledger/business-product/roadmap.md"
         },
         {
           "kind": "missing",
           "area": "ai-workflow",
           "text": "AI & development workflow is incomplete: documentation-skills.md missing.",
-          "file": "docs/product-hub/acme-ledger/ai-development-workflow/"
+          "file": "docs/crafthall/canon/acme-ledger/ai-development-workflow/"
         },
         {
           "kind": "stale",
           "area": "roadmap",
           "text": "Release plan · r2-launch.md is still a draft (status: draft) – write the real content and set status: current.",
-          "file": "docs/product-hub/acme-ledger/business-product/releases/r2-launch.md"
+          "file": "docs/crafthall/canon/acme-ledger/business-product/releases/r2-launch.md"
         },
         {
           "kind": "stale",
           "area": "experiments",
           "text": "Experiment “E2” is past its revisit-by date (2026-01-15) with no result – record the result or set a new date.",
-          "file": "docs/product-hub/acme-ledger/business-product/experiments.md"
+          "file": "docs/crafthall/canon/acme-ledger/business-product/experiments.md"
         },
         {
           "kind": "stale",
           "area": "overview",
           "text": "A feature file was updated on 2026-03-10, after the product README (2026-03-01).",
-          "file": "docs/product-hub/acme-ledger/README.md"
+          "file": "docs/crafthall/canon/acme-ledger/README.md"
         }
       ]
     },
@@ -172,7 +172,7 @@
           "kind": "inconsistent",
           "area": "overview",
           "text": "README status “beta” is not one of idea, validation, building, live, paused, retired.",
-          "file": "docs/product-hub/acme-orbit/README.md"
+          "file": "docs/crafthall/canon/acme-orbit/README.md"
         }
       ]
     }

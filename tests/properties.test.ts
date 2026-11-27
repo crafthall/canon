@@ -79,7 +79,7 @@ describe('experiments overdue property', () => {
     const page = (body: string) => `---\nproduct: p\npage: experiments\nstatus: current\nupdated: 2026-01-01\n---\n\n# P – experiments\n\n${body}\n`;
     fc.assert(
       fc.property(rows, day, (rs, t) => {
-        const src = { dir: 'docs/product-hub/p', readme, overview: page('x'), experiments: page(table(rs)) };
+        const src = { dir: 'docs/crafthall/canon/p', readme, overview: page('x'), experiments: page(table(rs)) };
         const want = rs.filter((r) => r.revisit.d !== null && r.revisit.d < t && noResult(r.result)).length;
         const found = buildProduct('p', src, { today: iso(t) }).findings.filter((f) => f.area === 'experiments');
         expect(found.length).toBe(want);

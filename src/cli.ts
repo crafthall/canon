@@ -16,7 +16,7 @@
 import { existsSync, mkdirSync, realpathSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { HUB_DIR } from './model.ts';
+import { legacyHubNotice, resolveHubDir } from './model.ts';
 import { checkHub } from './check.ts';
 import { hubReport } from './report.ts';
 import { isIsoDate } from './readers.ts';
@@ -61,6 +61,13 @@ function guarded(label: string, err: (s: string) => void, run: () => number): nu
   }
 }
 
+/** The hub folder of `root` (docs/crafthall/canon, or the legacy docs/product-hub with a notice on stderr). */
+function hubDirOf(root: string, label: string, err: (line: string) => void): string {
+  const { hubDir, legacy } = resolveHubDir((p) => nodeSource(root).isDir(p));
+  if (legacy) err(`${label} – note: ${legacyHubNotice()}`);
+  return hubDir;
+}
+
 /** `canon check`: returns the exit code. */
 export function runCheck(argv: readonly string[], o: CheckHostOptions = {}): number {
   const { label = 'canon check', err = console.error } = o;
@@ -72,7 +79,7 @@ function check(argv: readonly string[], { root: defaultRoot = process.cwd(), lab
   let all = false;
   let json = false;
   let root = defaultRoot;
-  let hubDir = HUB_DIR;
+  let hubDir: string | null = null;
   let plansDir: string | null = null;
   let today = defaultToday ?? new Date().toISOString().slice(0, 10);
   const fail = (msg: string) => {
@@ -98,6 +105,7 @@ function check(argv: readonly string[], { root: defaultRoot = process.cwd(), lab
   }
   if (only && all) return fail('give a product id or --all, not both');
   if (!only && !all) return fail('missing <id> or --all');
+  if (hubDir == null) hubDir = hubDirOf(root, label, err);
   if (only && !existsSync(join(root, hubDir, only))) {
     err(`${label} – no product folder ${hubDir}/${only} (${usage})`);
     return 2;
@@ -144,7 +152,7 @@ export function runNew(argv: readonly string[], o: NewHostOptions = {}): number 
 /** `canon new` returning its summary too (`canon init` builds on it); `summary` is null unless the code is 0. */
 function scaffold(argv: readonly string[], o: NewHostOptions): { code: number; summary: ScaffoldSummary | null } {
   const r = (code: number, summary: ScaffoldSummary | null = null) => ({ code, summary });
-  const { root: defaultRoot = process.cwd(), label = 'canon new', command = 'canon new', usage = USAGE_NEW, checkLabel = 'canon check', newCommand, defaultTeam = null, ignoreReferences = [], next, today, log = console.log, err = console.error, teams, movedPathsFile, plansDir = PLANS_DIR, hubDir = HUB_DIR } = o;
+  const { root: defaultRoot = process.cwd(), label = 'canon new', command = 'canon new', usage = USAGE_NEW, checkLabel = 'canon check', newCommand, defaultTeam = null, ignoreReferences = [], next, today, log = console.log, err = console.error, teams, movedPathsFile, plansDir = PLANS_DIR } = o;
   const parsed = parseNewArgs(argv, { defaultTeam });
   if (parsed.error != null) {
     err(`${label} – ${parsed.error}\n${usage}`);
@@ -152,6 +160,7 @@ function scaffold(argv: readonly string[], o: NewHostOptions): { code: number; s
   }
   const { opts } = parsed;
   const root = opts.root ? resolve(opts.root) : defaultRoot;
+  const hubDir = o.hubDir ?? hubDirOf(root, label, err);
   const source = nodeSource(root);
   // The repo's own template pages win, page by page; every page it does not have comes from the package's template.
   const own = source.isDir(`${hubDir}/_template`);
@@ -209,7 +218,7 @@ export function runInit(argv: readonly string[], o: InitHostOptions = {}): numbe
 }
 
 function init(argv: readonly string[], o: InitHostOptions): number {
-  const { initLabel = 'canon init', initUsage = USAGE_INIT, log = console.log, err = console.error, hubDir = HUB_DIR, env = process.env, newCommand } = o;
+  const { initLabel = 'canon init', initUsage = USAGE_INIT, log = console.log, err = console.error, env = process.env, newCommand } = o;
   let json = false;
   let hqFlag: string | null = o.hq ?? null;
   let noHq = false;
@@ -237,6 +246,9 @@ function init(argv: readonly string[], o: InitHostOptions): number {
     return 2;
   }
   const root = parsed.opts.root ? resolve(parsed.opts.root) : (o.root ?? process.cwd());
+  // Resolved once here, so scaffold (called with the same options) does not print the legacy notice a second time.
+  const hubDir = o.hubDir ?? hubDirOf(root, initLabel, err);
+  o = { ...o, hubDir };
   const today = o.today ?? new Date().toISOString().slice(0, 10);
   const captured: string[] = [];
   const ports: InitPorts = {

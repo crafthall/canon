@@ -12,4 +12,4 @@ updated: 2026-03-01
 
 > A fictional product with every remaining wording.
 
-Web app: [acme-lambda-web](../../../apps/acme-lambda-web/) (its package.json is not valid JSON).
+Web app: [acme-lambda-web](../../../../apps/acme-lambda-web/) (its package.json is not valid JSON).

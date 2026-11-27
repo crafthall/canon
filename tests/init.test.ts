@@ -31,7 +31,7 @@ import { findHq, hqOutcome, offlineHqEnv, OPTIMIZE_NOTE } from '../src/node';
 
 const TODAY = '2026-11-27';
 const README = `---\nproduct: demo\npage: hub\nname: Demo\nstatus: idea\napp: none yet\nupdated: ${TODAY}\n---\n\n# Demo – product hub\n\n## Status\n\n| | |\n|---|---|\n| Stage | **Idea** (\`status: idea\`) |\n| Team | none yet |\n\n## Pages\n\n- x\n\n## Changelog\n\n- ${TODAY} – Product folder created (\`canon init\`).\n`;
-const SUMMARY: ScaffoldSummary = { id: 'demo', name: 'Demo', dir: 'docs/product-hub/demo', status: 'idea', stageLabel: 'Idea', pages: ['business-product/overview.md'], apps: [], plan: null };
+const SUMMARY: ScaffoldSummary = { id: 'demo', name: 'Demo', dir: 'docs/crafthall/canon/demo', status: 'idea', stageLabel: 'Idea', pages: ['business-product/overview.md'], apps: [], plan: null };
 const CHECKED: HqOutcome = { kind: 'checked', exitCode: 0, verdict: 'OK – no conflicts or broken handoffs found in 2 agents (checked on this machine, nothing sent)', version: '0.1.0', rulesBuild: 'abc123', agents: 2, hints: [] };
 
 /** A fake repository and ports that log every call in order. */
@@ -41,8 +41,8 @@ function harness(o: { scaffoldCode?: number; files?: string[]; hq?: HqOutcome; o
   const ports: InitPorts = {
     scaffold: () => {
       calls.push('scaffold');
-      if ((o.scaffoldCode ?? 0) !== 0) return { code: o.scaffoldCode as number, summary: null, lines: ['canon init – refused, nothing written:', '  - docs/product-hub/demo/ already exists – canon init never overwrites; edit that folder instead'] };
-      repo['docs/product-hub/demo/README.md'] = README;
+      if ((o.scaffoldCode ?? 0) !== 0) return { code: o.scaffoldCode as number, summary: null, lines: ['canon init – refused, nothing written:', '  - docs/crafthall/canon/demo/ already exists – canon init never overwrites; edit that folder instead'] };
+      repo['docs/crafthall/canon/demo/README.md'] = README;
       return { code: 0, summary: SUMMARY, lines: ['canon check demo – OK.'] };
     },
     files: () => {
@@ -79,7 +79,7 @@ describe('canon init – step order', () => {
     const h = harness();
     const s = run(h);
     expect(s.steps.map((x) => x.id)).toEqual([...INIT_STEPS]);
-    expect(h.calls).toEqual(['scaffold', 'files', 'source', 'write CLAUDE.md', 'hq', 'optimize', 'source', 'write docs/product-hub/demo/README.md', 'check demo']);
+    expect(h.calls).toEqual(['scaffold', 'files', 'source', 'write CLAUDE.md', 'hq', 'optimize', 'source', 'write docs/crafthall/canon/demo/README.md', 'check demo']);
     expect(s.ok).toBe(true);
     expect(s.steps.map((x) => x.status)).toEqual(['done', 'skipped', 'done', 'done', 'skipped', 'done']);
   });
@@ -88,7 +88,7 @@ describe('canon init – step order', () => {
     const h = harness();
     run(h);
     expect(h.calls.indexOf('write CLAUDE.md')).toBeLessThan(h.calls.indexOf('hq'));
-    expect(h.calls.indexOf('optimize')).toBeLessThan(h.calls.indexOf('write docs/product-hub/demo/README.md'));
+    expect(h.calls.indexOf('optimize')).toBeLessThan(h.calls.indexOf('write docs/crafthall/canon/demo/README.md'));
   });
 });
 
@@ -100,7 +100,7 @@ describe('canon init – not available paths', () => {
     expect(step).toEqual({ id: 'hq-check', status: 'skipped', message: 'Crafthall HQ is not installed (no Claude Code plugin crafthall-hq, no crafthall-hq on PATH, no --hq)' });
     expect(s.ok).toBe(true);
     expect(s.hq).toBeNull();
-    expect(h.repo['docs/product-hub/demo/README.md']).toMatch(/^\| Crafthall HQ team check \| not run – Crafthall HQ is not installed .*\(2026-11-27\) \|$/m);
+    expect(h.repo['docs/crafthall/canon/demo/README.md']).toMatch(/^\| Crafthall HQ team check \| not run – Crafthall HQ is not installed .*\(2026-11-27\) \|$/m);
     expect(s.confirm).toContain('Check the agent team with Crafthall HQ once it is installed (/crafthall-hq:open).');
   });
 
@@ -112,7 +112,7 @@ describe('canon init – not available paths', () => {
     const failed = run(h);
     expect(failed.steps[3]).toMatchObject({ status: 'failed', message: 'Crafthall HQ did not run offline; nothing recorded' });
     expect(failed.ok).toBe(true);
-    expect(h.repo['docs/product-hub/demo/README.md']).toMatch(/\| Crafthall HQ team check \| not run – failed: Crafthall HQ did not run offline/);
+    expect(h.repo['docs/crafthall/canon/demo/README.md']).toMatch(/\| Crafthall HQ team check \| not run – failed: Crafthall HQ did not run offline/);
   });
 
   it('Optimize missing → skipped with its note; a recorded baseline → done', () => {
@@ -121,16 +121,16 @@ describe('canon init – not available paths', () => {
     const h = harness({ optimize: { kind: 'recorded', message: 'baseline: 3 tasks, USD 0.42' } });
     const r = run(h);
     expect(r.steps[4]).toEqual({ id: 'optimize-baseline', status: 'done', message: 'baseline: 3 tasks, USD 0.42' });
-    expect(h.repo['docs/product-hub/demo/README.md']).toMatch(/Optimize baseline recorded\.$/m);
+    expect(h.repo['docs/crafthall/canon/demo/README.md']).toMatch(/Optimize baseline recorded\.$/m);
   });
 });
 
 describe('canon init – an existing hub', () => {
   it('refuses: nothing is written, HQ and Optimize never run, every later step is not-run, exit 1', () => {
-    const h = harness({ scaffoldCode: 1, repo: { 'docs/product-hub/demo/README.md': 'mine', 'CLAUDE.md': 'rules' } });
+    const h = harness({ scaffoldCode: 1, repo: { 'docs/crafthall/canon/demo/README.md': 'mine', 'CLAUDE.md': 'rules' } });
     const s = run(h);
     expect(h.calls).toEqual(['scaffold']);
-    expect(h.repo).toEqual({ 'docs/product-hub/demo/README.md': 'mine', 'CLAUDE.md': 'rules' });
+    expect(h.repo).toEqual({ 'docs/crafthall/canon/demo/README.md': 'mine', 'CLAUDE.md': 'rules' });
     expect(s.ok).toBe(false);
     expect(s.steps.map((x) => x.status)).toEqual(['refused', 'not-run', 'not-run', 'not-run', 'not-run', 'not-run']);
     expect(s.steps[0].lines?.join('\n')).toMatch(/never overwrites/);
@@ -138,9 +138,9 @@ describe('canon init – an existing hub', () => {
   });
 
   it('a canon check problem after the record fails the summary step (exit 1)', () => {
-    const s = run(harness({ problems: ['docs/product-hub/demo/README.md: broken link "x.md"'] }));
+    const s = run(harness({ problems: ['docs/crafthall/canon/demo/README.md: broken link "x.md"'] }));
     expect(s.ok).toBe(false);
-    expect(s.steps[5]).toMatchObject({ status: 'failed', lines: ['docs/product-hub/demo/README.md: broken link "x.md"'] });
+    expect(s.steps[5]).toMatchObject({ status: 'failed', lines: ['docs/crafthall/canon/demo/README.md: broken link "x.md"'] });
   });
 });
 
@@ -149,12 +149,12 @@ describe('canon init – summary', () => {
     const hq: HqOutcome = { ...CHECKED, exitCode: 1, verdict: 'Things to improve – 2 hints | 1 minor', hints: ['One-way handoff – .claude/agents/a.md:4'] };
     const h = harness({ hq });
     const s = run(h);
-    const readme = h.repo['docs/product-hub/demo/README.md'];
+    const readme = h.repo['docs/crafthall/canon/demo/README.md'];
     expect(readme).toContain('| Team | none yet |\n| Crafthall HQ team check | Things to improve – 2 hints \\| 1 minor – 2026-11-27, Crafthall HQ 0.1.0, rules abc123 |\n\n## Pages');
     expect(readme).toContain('## Changelog\n\n- 2026-11-27 – Started as a Crafthall project (`canon init`): Crafthall HQ team check found things to improve (offline); Optimize baseline skipped (no offline baseline yet).\n- 2026-11-27 – Product folder created');
     expect(s.hq).toEqual(hq);
     expect(s.steps[3].lines).toEqual(['One-way handoff – .claude/agents/a.md:4']);
-    expect(s.confirm).toEqual(['Read the agent rules in CLAUDE.md and commit them with the hub.', 'Fix or record the Crafthall HQ hints above (re-run: crafthall-hq).', 'Write the draft pages and set status: current once confirmed (1 page(s) in docs/product-hub/demo/).']);
+    expect(s.confirm).toEqual(['Read the agent rules in CLAUDE.md and commit them with the hub.', 'Fix or record the Crafthall HQ hints above (re-run: crafthall-hq).', 'Write the draft pages and set status: current once confirmed (1 page(s) in docs/crafthall/canon/demo/).']);
     expect(s.hub).toEqual({ problems: [], completeness: 0, findings: ['Overview is a draft.'] });
     const text = formatInitSummary(s);
     expect(text.split('\n')[0]).toBe('canon init – Demo (demo):');
@@ -183,11 +183,11 @@ describe('canon init – summary', () => {
 
 describe('canon init – bootstrap decision', () => {
   it('a repository with content → pending (left to the bootstrap skill); only hub and agent files → skipped', () => {
-    const withCode = run(harness({ files: ['src/index.ts', 'CLAUDE.md', 'docs/product-hub/demo/README.md'] }), { bootstrapHint: 'skill bootstrap' });
+    const withCode = run(harness({ files: ['src/index.ts', 'CLAUDE.md', 'docs/crafthall/canon/demo/README.md'] }), { bootstrapHint: 'skill bootstrap' });
     expect(withCode.steps[1]).toMatchObject({ status: 'pending' });
     expect(withCode.steps[1].message).toMatch(/^1 file\(s\) to read: run skill bootstrap for demo/);
     expect(withCode.confirm[0]).toBe('Run skill bootstrap for demo, then answer its "Confirm these" list.');
-    expect(run(harness({ files: ['CLAUDE.md', '.gitignore', '.claude/agents/a.md', 'docs/product-hub/demo/README.md'] })).steps[1].status).toBe('skipped');
+    expect(run(harness({ files: ['CLAUDE.md', '.gitignore', '.claude/agents/a.md', 'docs/crafthall/canon/demo/README.md'] })).steps[1].status).toBe('skipped');
   });
 
   it('scope apps: only the --app folders count (a monorepo full of other code is not this product)', () => {
@@ -198,7 +198,7 @@ describe('canon init – bootstrap decision', () => {
   });
 
   it('contentFiles leaves out the hub folder, agent files and git metadata', () => {
-    expect(contentFiles(['CLAUDE.md', 'AGENTS.md', '.claude/skills/x/SKILL.md', '.gitignore', '.gitattributes', 'docs/product-hub/a/README.md', 'docs/product-hubx.md', 'README.md', 'docs/CLAUDE.md'])).toEqual(['docs/product-hubx.md', 'README.md', 'docs/CLAUDE.md']);
+    expect(contentFiles(['CLAUDE.md', 'AGENTS.md', '.claude/skills/x/SKILL.md', '.gitignore', '.gitattributes', 'docs/crafthall/canon/a/README.md', 'docs/crafthall/canonx.md', 'README.md', 'docs/CLAUDE.md'])).toEqual(['docs/crafthall/canonx.md', 'README.md', 'docs/CLAUDE.md']);
     expect(contentFiles(['notes/x.md', 'h/a.md'], { hubDir: 'h' })).toEqual(['notes/x.md']);
   });
 });

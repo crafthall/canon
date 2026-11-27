@@ -35,4 +35,4 @@ for (const f of readdirSync(DIST).filter((n) => n.endsWith('.js') || n.endsWith(
   const text = readFileSync(join(DIST, f), 'utf8');
   if (/(?:from|import)\s*\(?\s*'\.\.?\/[^']*\.ts'/.test(text)) throw new Error(`build: dist/${f} still imports a .ts file`);
 }
-console.log('product-hub build – dist/ written (JS + .d.ts)');
+console.log('canon build – dist/ written (JS + .d.ts)');

@@ -49,11 +49,11 @@ describe('canon check --json report and its schema', () => {
   it('a drifted in-memory hub validates too, with problems and findings filled', () => {
     const page = (name: string, extra = '') => `---\nproduct: tiny\npage: ${name}\nstatus: draft\nupdated: 2026-11-26\n${extra}---\n\n# ${name}\n`;
     const src = memorySource({
-      'docs/product-hub/tiny/README.md': '---\nproduct: tiny\npage: hub\nstatus: building\nupdated: 2026-11-26\n---\n\n# Tiny\n\n> Pitch.\n\n[gone](business-product/gone.md)\n',
-      'docs/product-hub/tiny/business-product/overview.md': page('overview'),
-      'docs/product-hub/tiny/business-product/features/README.md': page('feature-catalog').replace('status: draft', 'status: current') + '\n| F | built | [f](f.md) |\n|---|---|---|\n',
-      'docs/product-hub/tiny/business-product/features/f.md': page('feature').replace('status: draft', 'status: shipped'),
-      'docs/product-hub/tiny/notes.txt': 'x',
+      'docs/crafthall/canon/tiny/README.md': '---\nproduct: tiny\npage: hub\nstatus: building\nupdated: 2026-11-26\n---\n\n# Tiny\n\n> Pitch.\n\n[gone](business-product/gone.md)\n',
+      'docs/crafthall/canon/tiny/business-product/overview.md': page('overview'),
+      'docs/crafthall/canon/tiny/business-product/features/README.md': page('feature-catalog').replace('status: draft', 'status: current') + '\n| F | built | [f](f.md) |\n|---|---|---|\n',
+      'docs/crafthall/canon/tiny/business-product/features/f.md': page('feature').replace('status: draft', 'status: shipped'),
+      'docs/crafthall/canon/tiny/notes.txt': 'x',
     });
     const r = hubReport(src);
     expect(valid(r)).toBe('valid');

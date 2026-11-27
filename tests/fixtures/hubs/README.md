@@ -10,7 +10,7 @@ All names are invented ("Acme …"); nothing links outside a fixture. The expect
 |---|---|---|---|
 | `complete` | `acme-ledger` at Development (`status: building`), every page `current`, catalog matches the feature files, one ADR, a tagged app, a valid experiments page (one experiment past its date with a result, one due 2099-12-31) | 0 | 0 problems, 0 findings, completeness 16/16 = 100 % |
 | `early` | `acme-sprout` at Idea: the hub README and `business-product/overview.md` only | 0 | 0 problems, 0 findings, completeness 1/1 = 100 % (counted against Idea only) |
-| `empty` | no `docs/product-hub/` folder | **0** | 0 products, 0 problems. The plan said exit 1 "no hub"; `canon check --all` exits 0 today ("OK (0 product folder(s))"). The Lead kept exit 0 (2026-11-26, #1048): an empty repository is a valid state, and the HQ module shows its empty state from `products: []` |
+| `empty` | no `docs/crafthall/canon/` folder | **0** | 0 products, 0 problems. The plan said exit 1 "no hub"; `canon check --all` exits 0 today ("OK (0 product folder(s))"). The Lead kept exit 0 (2026-11-26, #1048): an empty repository is a valid state, and the HQ module shows its empty state from `products: []` |
 | `drifted` | `acme-ledger` with a pricing reversal, plus `acme-orbit`, `framework/`, a stray file, an untagged, a tag-only and a broken project | 1 | every structure rule (`CHECK_RULES`, 14) exactly once and every health check that is a finding (`HEALTH_CHECKS` but `missing-page`, 13) exactly once; completeness 8/15 |
 | `drifted-variants` | `acme-kappa` and `acme-lambda`: the finding branches and problem wordings `drifted` cannot hold without repeating a kind | 1 | 14 problems, 13 findings, every remaining finding branch |
 
@@ -31,8 +31,8 @@ The pricing reversal: ADR-0004 (paid plans only) supersedes ADR-0001 (free tier)
 | README `app: apps/acme-ledger-web`, which has no `product:acme-ledger` tag | `app` | – |
 | "## Pricing" in `monetization.md` and `go-to-market.md` | `topic` | – |
 | `libs/acme-sync` tagged `product:acme-sync`, no hub | `tagged-without-hub` | – |
-| `docs/product-hub/framework/` | `reserved-id` | – |
-| `docs/product-hub/notes.md` | `hub-folder` | – |
+| `docs/crafthall/canon/framework/` | `reserved-id` | – |
+| `docs/crafthall/canon/notes.md` | `hub-folder` | – |
 | `apps/acme-broken/package.json` is not valid JSON (no hub README names it) | `package-json` | – |
 | `features/free-tier.md` is `removed`, the catalog row says `built` | – | `catalog-mismatch` |
 | `features/free-tier.md` updated 2026-03-10, README 2026-03-01 | – | `feature-newer` |

@@ -15,7 +15,7 @@ A repository can wrap the commands in its own npm scripts (labels, allowed teams
 canon new <id> --name "<Name>" --pitch "<one line>" --stage validation
 ```
 
-The scaffold creates the hub README and the pages the stage requires, each in `status: draft` with a short "what goes here" guide. It takes each page from the repository's `docs/product-hub/_template/` when that folder has it, else from the package's own template – keep only the pages you change there. Without the command: copy the template to `docs/product-hub/<id>/` and delete the pages that are not due yet.
+The scaffold creates the hub README and the pages the stage requires, each in `status: draft` with a short "what goes here" guide. It takes each page from the repository's `docs/crafthall/canon/_template/` when that folder has it, else from the package's own template – keep only the pages you change there. Without the command: copy the template to `docs/crafthall/canon/<id>/` and delete the pages that are not due yet.
 
 ## 2. Fill the pages the stage asks for
 

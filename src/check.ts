@@ -18,7 +18,7 @@
  * Pure: every read goes through a `HubSource` (or the callbacks of checkProduct / checkConsistency).
  */
 import { featureTableRows } from './readers.ts';
-import { FEATURE_STATUSES, FRONT_MATTER_KEYS, HUB_DIR, PRODUCT_STATUSES, REQUIREMENTS, RESERVED_IDS, STAGES, STAGE_OF_STATUS, WORKFLOW_PAGES } from './model.ts';
+import { FEATURE_STATUSES, FRONT_MATTER_KEYS, HUB_DIR, PRODUCT_STATUSES, REQUIREMENTS, RESERVED_IDS, STAGES, STAGE_OF_STATUS, WORKFLOW_PAGES, resolveHubDir } from './model.ts';
 import { joinPath, type HubSource } from './source.ts';
 
 /** Rule ids of the structure check (stable: the `--json` contract carries them). */
@@ -256,7 +256,9 @@ export function checkConsistency(id: string, files: ReadonlySet<string>, { read,
   }
   // 4. Apps named in the hub README exist and carry product:<id>.
   if (id !== '_template') {
-    const apps = new Set([...readme.matchAll(/\]\((?:\.\.\/){3}(apps\/[a-z0-9-]+)\//g)].map((m) => m[1]));
+    // A link from the README to the repo root climbs one `../` per segment of the product folder (4 under docs/crafthall/canon, 3 in the legacy docs/product-hub).
+    const up = base.split('/').filter(Boolean).length;
+    const apps = new Set([...readme.matchAll(new RegExp(`\\]\\((?:\\.\\./){${up}}(apps/[a-z0-9-]+)/`, 'g'))].map((m) => m[1]));
     if (meta.app && meta.app !== 'none' && /^apps\//.test(meta.app)) apps.add(meta.app.replace(/\/$/, ''));
     for (const app of apps) {
       let tags: string[] | null;
@@ -371,7 +373,7 @@ export function taggedProjects(source: HubSource): { dir: string; product: strin
 }
 
 export interface CheckHubOptions {
-  /** Repo-relative folder holding one folder per product (default docs/product-hub). */
+  /** Repo-relative folder holding one folder per product (default: docs/crafthall/canon, or the legacy docs/product-hub when only that exists). */
   hubDir?: string;
   /** Check only this product folder (and the projects tagged for it). */
   only?: string | null;
@@ -386,7 +388,7 @@ export interface CheckHubOptions {
 }
 
 /** Checks every product folder under `hubDir` (or only `only`). `products` counts product folders ("_" folders not). */
-export function checkHub(source: HubSource, { hubDir = HUB_DIR, only = null, newCommand = 'canon new', template = null }: CheckHubOptions = {}): { products: number; problems: CheckProblem[] } {
+export function checkHub(source: HubSource, { hubDir = resolveHubDir((p) => source.isDir(p)).hubDir, only = null, newCommand = 'canon new', template = null }: CheckHubOptions = {}): { products: number; problems: CheckProblem[] } {
   if (!source.isDir(hubDir)) return { products: 0, problems: [] };
   const problems: CheckProblem[] = [];
   let products = 0;

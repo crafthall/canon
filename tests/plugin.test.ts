@@ -120,7 +120,7 @@ describe('command arguments', () => {
     [['a', 'b'], /unexpected argument "b"/],
     [['--today', 'tomorrow'], /--today must be a date YYYY-MM-DD/],
     [['--root'], /--root needs a value/],
-    [['no-such-product', '--root', drifted.root], /no product folder docs\/product-hub\/no-such-product/],
+    [['no-such-product', '--root', drifted.root], /no product folder docs\/crafthall\/canon\/no-such-product/],
   ])('bad arguments %j → exit 2 with the reason and the plugin usage, nothing on stdout', (argv, reason) => {
     const r = run(argv);
     expect(r.code).toBe(2);
@@ -131,7 +131,7 @@ describe('command arguments', () => {
   });
 
   it('property: for any arguments the exit code is canon check’s for the same arguments (with --all when no id)', () => {
-    const token = fc.constantFrom('--all', '--json', 'acme-ledger', 'acme-orbit', 'nope', '--today', FIXTURE_TODAY, 'bad-date', '--bogus', '--hub-dir', 'docs/product-hub');
+    const token = fc.constantFrom('--all', '--json', 'acme-ledger', 'acme-orbit', 'nope', '--today', FIXTURE_TODAY, 'bad-date', '--bogus', '--hub-dir', 'docs/crafthall/canon');
     fc.assert(
       fc.property(fc.array(token, { maxLength: 6 }), (argv) => {
         const args = [...argv, '--root', drifted.root];
@@ -182,7 +182,7 @@ describe('differential: the committed plugin = canon check on every shared fixtu
     const made = spawnSync(process.execPath, [join(PLUGIN, 'scripts', 'hub.mjs'), 'new', 'demo-calc', '--name', 'Demo Calc'], { cwd: repo, encoding: 'utf8' });
     expect(made.status, made.stdout + made.stderr).toBe(0);
     expect(made.stdout).toMatch(/canon check demo-calc – OK\./);
-    expect(existsSync(join(repo, 'docs/product-hub/demo-calc/README.md'))).toBe(true);
+    expect(existsSync(join(repo, 'docs/crafthall/canon/demo-calc/README.md'))).toBe(true);
     const r = runCommand(PLUGIN, 'demo-calc', repo);
     expect(r.code, r.raw).toBe(0);
     expect(r.out).toMatch(/^crafthall-canon check – OK, \d+ finding\(s\) \(demo-calc\)/);

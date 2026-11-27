@@ -3,7 +3,7 @@
 // expected problem rules. The CLI runs as a separate Node process from the package's own src/cli.ts; this test
 // imports nothing outside the package.
 import { spawnSync } from 'node:child_process';
-import { appendFileSync, chmodSync, existsSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
+import { appendFileSync, chmodSync, existsSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, renameSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import Ajv from 'ajv';
@@ -43,10 +43,10 @@ describe('hub CLI end to end in a clean repository', () => {
     expect(made.code).toBe(0);
     expect(made.out).toMatch(/canon new – creating Demo Calc \(demo-calc\) at Idea/);
     expect(made.out).toMatch(/canon check demo-calc – OK\./);
-    expect(readFileSync(join(dir, 'docs/product-hub/demo-calc/README.md'), 'utf8')).toMatch(/^> Works out demo sums\.$/m);
+    expect(readFileSync(join(dir, 'docs/crafthall/canon/demo-calc/README.md'), 'utf8')).toMatch(/^> Works out demo sums\.$/m);
     const v = hub(dir, 'new', 'second', '--stage', 'validation', '--team', 'growth');
     expect(v.code, v.out + v.err).toBe(0);
-    expect(existsSync(join(dir, 'docs/product-hub/second/business-product/value-proposition.md'))).toBe(true);
+    expect(existsSync(join(dir, 'docs/crafthall/canon/second/business-product/value-proposition.md'))).toBe(true);
 
     const one = hub(dir, 'check', 'demo-calc');
     expect([one.code, one.out.trim()]).toEqual([0, 'canon check – OK (demo-calc): structure, lifecycle files, links, catalog, ADR index, app tags, one topic per page.']);
@@ -67,25 +67,25 @@ describe('hub CLI end to end in a clean repository', () => {
 
   it("canon new: a repository's own _template/ pages win page by page; every page it lacks comes from the package template", () => {
     const dir = cleanRepo();
-    const tpl = join(dir, 'docs/product-hub/_template');
+    const tpl = join(dir, 'docs/crafthall/canon/_template');
     mkdirSync(join(tpl, 'business-product'), { recursive: true });
     const bundledOverview = readFileSync(join(import.meta.dirname, '../template/business-product/overview.md'), 'utf8');
     writeFileSync(join(tpl, 'business-product/overview.md'), bundledOverview.replace(/^# .*$/m, '# <Name> – overview (house style)'));
     const made = hub(dir, 'new', 'demo-calc', '--stage', 'validation', '--name', 'Demo Calc');
     expect(made.code, made.out + made.err).toBe(0);
-    expect(readFileSync(join(dir, 'docs/product-hub/demo-calc/business-product/overview.md'), 'utf8')).toMatch(/^# Demo Calc – overview \(house style\)$/m);
+    expect(readFileSync(join(dir, 'docs/crafthall/canon/demo-calc/business-product/overview.md'), 'utf8')).toMatch(/^# Demo Calc – overview \(house style\)$/m);
     // README and value proposition are not in the repo's template: the package's pages are used.
-    expect(readFileSync(join(dir, 'docs/product-hub/demo-calc/business-product/value-proposition.md'), 'utf8')).toBe(
+    expect(readFileSync(join(dir, 'docs/crafthall/canon/demo-calc/business-product/value-proposition.md'), 'utf8')).toBe(
       readFileSync(join(import.meta.dirname, '../template/business-product/value-proposition.md'), 'utf8').replaceAll('<Name>', 'Demo Calc').replace(/^product: .*$/m, 'product: demo-calc').replace(/^updated: .*$/m, (l) => l.replace(/YYYY-MM-DD/, new Date().toISOString().slice(0, 10))),
     );
-    expect(existsSync(join(dir, 'docs/product-hub/demo-calc/README.md'))).toBe(true);
+    expect(existsSync(join(dir, 'docs/crafthall/canon/demo-calc/README.md'))).toBe(true);
     expect(hub(dir, 'check', 'demo-calc').code).toBe(0);
   });
 
   it('a drifted hub exits 1 with the expected problem rules, in text and in --json', () => {
     const dir = cleanRepo();
     expect(hub(dir, 'new', 'drift', '--stage', 'validation').code).toBe(0);
-    const at = (p: string) => join(dir, 'docs/product-hub/drift', p);
+    const at = (p: string) => join(dir, 'docs/crafthall/canon/drift', p);
     rmSync(at('business-product/value-proposition.md'));
     writeFileSync(at('notes.md'), '---\nproduct: drift\npage: notes\nstatus: current\nupdated: 2026-11-26\n---\n# Notes\n');
     appendFileSync(at('business-product/overview.md'), '\n[gone](missing.md)\n');
@@ -103,7 +103,7 @@ describe('hub CLI end to end in a clean repository', () => {
     expect(report.ok).toBe(false);
     expect(report.problems.map((p) => p.rule).sort()).toEqual(['front-matter', 'layout', 'lifecycle', 'link', 'link', 'tagged-without-hub']);
     // The README's own link to the removed page is broken too.
-    expect(report.problems.filter((p) => p.rule === 'link').map((p) => p.message)).toEqual(['docs/product-hub/drift/README.md: broken link "business-product/value-proposition.md"', 'docs/product-hub/drift/business-product/overview.md: broken link "missing.md"']);
+    expect(report.problems.filter((p) => p.rule === 'link').map((p) => p.message)).toEqual(['docs/crafthall/canon/drift/README.md: broken link "business-product/value-proposition.md"', 'docs/crafthall/canon/drift/business-product/overview.md: broken link "missing.md"']);
     expect(report.counts.problems).toBe(6);
   });
 
@@ -125,7 +125,7 @@ describe('hub CLI end to end in a clean repository', () => {
     const dir = cleanRepo();
     expect(hub(dir, 'new', 'demo', '--stage', 'idea').code).toBe(0);
     // A hub page the process cannot read (EACCES) is an internal error, not a hub problem.
-    const page = join(dir, 'docs/product-hub/demo/business-product/overview.md');
+    const page = join(dir, 'docs/crafthall/canon/demo/business-product/overview.md');
     chmodSync(page, 0o000);
     try {
       for (const args of [['check', '--all'], ['check', '--all', '--json'], ['check', 'demo', '--json']]) {
@@ -143,7 +143,7 @@ describe('hub CLI end to end in a clean repository', () => {
   it('--today sets the date of the experiments rule; the default is the real date; a bad date is a usage error', () => {
     const dir = cleanRepo();
     expect(hub(dir, 'new', 'acme-bets').code).toBe(0);
-    writeFileSync(join(dir, 'docs/product-hub/acme-bets/business-product/experiments.md'), '---\nproduct: acme-bets\npage: experiments\nstatus: current\nupdated: 2026-01-01\n---\n\n# Acme Bets – experiments\n\n## Experiments\n\n| ID | Hypothesis | Metric | Go | Kill | Owner | Revisit by | Result |\n|---|---|---|---|---|---|---|---|\n| E1 | A bet | a number | ≥ 1 | 0 | me | 2026-01-15 | |\n');
+    writeFileSync(join(dir, 'docs/crafthall/canon/acme-bets/business-product/experiments.md'), '---\nproduct: acme-bets\npage: experiments\nstatus: current\nupdated: 2026-01-01\n---\n\n# Acme Bets – experiments\n\n## Experiments\n\n| ID | Hypothesis | Metric | Go | Kill | Owner | Revisit by | Result |\n|---|---|---|---|---|---|---|---|\n| E1 | A bet | a number | ≥ 1 | 0 | me | 2026-01-15 | |\n');
     const overdue = (args: string[]) => json(dir, 'acme-bets', ...args).report.products[0].findings.filter((f) => f.area === 'experiments').map((f) => f.text);
     expect(overdue(['--today', '2026-01-15'])).toEqual([]);
     expect(overdue(['--today', '2026-01-16'])).toEqual(['Experiment “E1” is past its revisit-by date (2026-01-15) with no result – record the result or set a new date.']);
@@ -165,5 +165,30 @@ describe('hub CLI end to end in a clean repository', () => {
     // A refusal (not a usage error) is exit 1 and writes nothing.
     const r = hub(dir, 'new', 'Bad_Id');
     expect([r.code, existsSync(join(dir, 'docs'))]).toEqual([1, false]);
+  });
+});
+
+describe('hub folder: docs/crafthall/canon, with the legacy docs/product-hub still read', () => {
+  it('resolveHubDir prefers docs/crafthall/canon and falls back to docs/product-hub only when that alone exists', async () => {
+    const { resolveHubDir, HUB_DIR, LEGACY_HUB_DIR } = await import('../src/index');
+    expect(HUB_DIR).toBe('docs/crafthall/canon');
+    expect(resolveHubDir(() => false)).toEqual({ hubDir: HUB_DIR, legacy: false });
+    expect(resolveHubDir((p) => p === LEGACY_HUB_DIR)).toEqual({ hubDir: LEGACY_HUB_DIR, legacy: true });
+    expect(resolveHubDir(() => true)).toEqual({ hubDir: HUB_DIR, legacy: false });
+  });
+
+  it('a hub moved back to docs/product-hub passes canon check with a move notice, and canon new keeps writing there', () => {
+    const dir = cleanRepo();
+    expect(hub(dir, 'new', 'acme', '--stage', 'idea', '--name', 'Acme', '--pitch', 'A demo.').code).toBe(0);
+    expect(existsSync(join(dir, 'docs/crafthall/canon/acme/README.md'))).toBe(true);
+    mkdirSync(join(dir, 'docs/product-hub'), { recursive: true });
+    renameSync(join(dir, 'docs/crafthall/canon/acme'), join(dir, 'docs/product-hub/acme'));
+    rmSync(join(dir, 'docs/crafthall'), { recursive: true, force: true });
+    const r = hub(dir, 'check', '--all');
+    expect(r.code).toBe(0);
+    expect(r.err).toMatch(/note: the hub is at docs\/product-hub\/.*git mv docs\/product-hub docs\/crafthall\/canon/);
+    expect(hub(dir, 'new', 'beta', '--stage', 'idea', '--name', 'Beta', '--pitch', 'Another demo.').code).toBe(0);
+    expect(existsSync(join(dir, 'docs/product-hub/beta/README.md'))).toBe(true);
+    expect(existsSync(join(dir, 'docs/crafthall'))).toBe(false);
   });
 });

@@ -1,6 +1,6 @@
 # Crafthall Canon – Claude Code plugin
 
-`crafthall-canon` (release form 2 of ADR-0002, see [CONTRIBUTING.md](../CONTRIBUTING.md)) puts the Crafthall Canon into Claude Code: one documentation folder per product, `docs/product-hub/<id>/`. Everything runs on this machine – no network, no account – and it works without Crafthall HQ.
+`crafthall-canon` (release form 2 of ADR-0002, see [CONTRIBUTING.md](../CONTRIBUTING.md)) puts the Crafthall Canon into Claude Code: one documentation folder per product, `docs/crafthall/canon/<id>/`. Everything runs on this machine – no network, no account – and it works without Crafthall HQ.
 
 - **`/crafthall-canon:check [<id>|--all] [--json]`** – the hub check: structure problems (each fails), then every product's stage, completeness and findings (missing, stale, inconsistent pages). No id = `--all`. Same arguments, exit codes (0 no problem, 1 problems, 2 usage error, 3 internal error) and findings as `canon check`; `--json` prints the `canon check --json` report (`schemaVersion: 1`, [schema](../schema/hub-check.schema.json)).
 - **Skills** (`skills/`, invoked as `/crafthall-canon:<name>` or picked by Claude from their descriptions):
@@ -8,7 +8,7 @@
   - `bootstrap` – draft a hub from the repository, every sentence with a source or marked as a hypothesis;
   - `everything-as-code` – in every change, update the hub pages the change made untrue and the changelog;
   - `hub-check` – the check, then a semantic read of the pages against each other and the code.
-- **Runner** `scripts/hub.mjs` – the `canon` command line (`check`, `new`, `init`) for Node ≥ 20 with no dependencies: a launcher for `scripts/hub-core.mjs`, the core bundled from `src/` (`src/plugin-runner.ts` and `src/cli.ts`). `template/` is the page template `canon new` and `canon init` use in a repository without its own `docs/product-hub/_template/`.
+- **Runner** `scripts/hub.mjs` – the `canon` command line (`check`, `new`, `init`) for Node ≥ 20 with no dependencies: a launcher for `scripts/hub-core.mjs`, the core bundled from `src/` (`src/plugin-runner.ts` and `src/cli.ts`). `template/` is the page template `canon new` and `canon init` use in a repository without its own `docs/crafthall/canon/_template/`.
 
 ## Source and build
 

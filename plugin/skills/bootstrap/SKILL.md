@@ -7,7 +7,7 @@ description: Draft a product hub for a repository that has code but no product d
 
 You write the **first draft** of a product's hub from what the repository shows. A person confirms it afterwards. Your value is three things: the hub layout, a source for every claim, and an honest list of what you could not know. A fluent page with an invented fact is worse than a short page with a hypothesis.
 
-Inputs you get: the product id (`<id>`), today's date, the repository (working directory). History is either `git log` (if you can run commands) or a text file with one commit per line (`<sha> <date> <subject>`, often `git-log.txt` at the root). Output: the folder `docs/product-hub/<id>/` (or the hub folder the person names), nothing else. Never edit files outside that folder.
+Inputs you get: the product id (`<id>`), today's date, the repository (working directory). History is either `git log` (if you can run commands) or a text file with one commit per line (`<sha> <date> <subject>`, often `git-log.txt` at the root). Output: the folder `docs/crafthall/canon/<id>/` (or the hub folder the person names), nothing else. Never edit files outside that folder.
 
 The page formats, front matter and headings are in [reference/pages.md](reference/pages.md). Read it before you write.
 

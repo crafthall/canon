@@ -64,7 +64,7 @@ completeness(h);                                      // 0.666… (metrics still
 import { completeness, loadProductDocs } from '@crafthall/canon';
 import { nodeSource } from '@crafthall/canon/node';
 
-const { products } = loadProductDocs(nodeSource(process.cwd()));   // docs/product-hub/<id>/ for every id
+const { products } = loadProductDocs(nodeSource(process.cwd()));   // docs/crafthall/canon/<id>/ for every id
 for (const p of products) console.log(p.id, p.stage, completeness(p.health), p.findings.length);
 ```
 

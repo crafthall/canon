@@ -18,7 +18,7 @@ Inputs: a product id (lowercase kebab-case, e.g. `bike-gear-calc`), a stage (`id
 
    A refusal (exit 1: the hub folder exists, an invalid id, an app of another product) writes nothing; tell the person why and stop. `canon init` never overwrites a hub – to change an existing hub, edit it.
 2. **Run it** without `--dry-run`. Add `--json` if you want to read the steps; otherwise read the text summary. It runs, in order:
-   1. **scaffold** – the hub folder (`docs/product-hub/<id>/`) with the pages the stage requires, as drafts;
+   1. **scaffold** – the hub folder (`docs/crafthall/canon/<id>/`) with the pages the stage requires, as drafts;
    2. **bootstrap** – `pending` when the repository (or, when the host limits it, the `--app` folders) has code; `skipped` otherwise;
    3. **agent-rules** – the Canon agent rules appended to `CLAUDE.md` (or `AGENTS.md` when only that exists; created when neither exists); a block already there is left as it is. A host whose agent instructions already hold the rule skips it;
    4. **hq-check** – the Crafthall HQ team check on this machine (offline, nothing sent). Skipped with a message when HQ is not installed or the repository has no Claude Code agent team;

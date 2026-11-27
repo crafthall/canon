@@ -8,7 +8,16 @@ import { dirname as dirname3, join as join3, resolve as resolve2 } from "node:pa
 import { pathToFileURL } from "node:url";
 
 // src/model.ts
-var HUB_DIR = "docs/product-hub";
+var CRAFTHALL_DIR = "docs/crafthall";
+var HUB_DIR = `${CRAFTHALL_DIR}/canon`;
+var LEGACY_HUB_DIR = "docs/product-hub";
+function resolveHubDir(isDir) {
+  if (!isDir(HUB_DIR) && isDir(LEGACY_HUB_DIR)) return { hubDir: LEGACY_HUB_DIR, legacy: true };
+  return { hubDir: HUB_DIR, legacy: false };
+}
+function legacyHubNotice() {
+  return `the hub is at ${LEGACY_HUB_DIR}/, the location used up to 0.2.x \u2013 move it with: mkdir -p ${CRAFTHALL_DIR} && git mv ${LEGACY_HUB_DIR} ${HUB_DIR}`;
+}
 var PRODUCT_STATUSES = ["idea", "validation", "building", "live", "paused", "retired"];
 var FEATURE_STATUSES = ["specified", "building", "built", "partial", "later", "removed"];
 var ADR_STATUSES = ["proposed", "accepted", "superseded", "rejected"];
@@ -681,11 +690,11 @@ function readHubProduct(source, dir, { ruleFiles } = {}) {
     ...ruleFiles ? { ruleTexts: Object.fromEntries(Object.entries(ruleFiles).map(([k, f]) => [k, source.read(joinPath(dir, f))])) } : {}
   };
 }
-function productIds(source, hubDir = HUB_DIR) {
+function productIds(source, hubDir = resolveHubDir((p) => source.isDir(p)).hubDir) {
   if (!source.isDir(hubDir)) return [];
   return source.list(hubDir).filter((id) => !id.startsWith("_") && !RESERVED_IDS.includes(id) && source.isDir(joinPath(hubDir, id)) && source.read(joinPath(hubDir, id, "README.md")) != null).sort();
 }
-function loadProductDocs(source, { hubDir = HUB_DIR, plans = [], render, rules, ruleFiles, today } = {}) {
+function loadProductDocs(source, { hubDir = resolveHubDir((p) => source.isDir(p)).hubDir, plans = [], render, rules, ruleFiles, today } = {}) {
   const errors = [];
   const products = [];
   for (const id of productIds(source, hubDir)) {
@@ -865,7 +874,8 @@ function checkConsistency(id, files, { read, appTags, base = `${HUB_DIR}/${id}` 
     else if (!index.includes(`](${name})`) && !index.includes(`](./${name})`)) add("adr-index", `${base}/${f}`, `${base}/${f}: not linked from the decisions index (architecture-engineering/decisions/README.md)`);
   }
   if (id !== "_template") {
-    const apps = new Set([...readme.matchAll(/\]\((?:\.\.\/){3}(apps\/[a-z0-9-]+)\//g)].map((m) => m[1]));
+    const up = base.split("/").filter(Boolean).length;
+    const apps = new Set([...readme.matchAll(new RegExp(`\\]\\((?:\\.\\./){${up}}(apps/[a-z0-9-]+)/`, "g"))].map((m) => m[1]));
     if (meta.app && meta.app !== "none" && /^apps\//.test(meta.app)) apps.add(meta.app.replace(/\/$/, ""));
     for (const app of apps) {
       let tags;
@@ -956,7 +966,7 @@ function taggedProjects(source) {
   for (const { dir, tags } of projects(source)) for (const t of tags || []) if (t.startsWith("product:")) out.push({ dir, product: t.slice("product:".length) });
   return out;
 }
-function checkHub(source, { hubDir = HUB_DIR, only = null, newCommand = "canon new", template = null } = {}) {
+function checkHub(source, { hubDir = resolveHubDir((p) => source.isDir(p)).hubDir, only = null, newCommand = "canon new", template = null } = {}) {
   if (!source.isDir(hubDir)) return { products: 0, problems: [] };
   const problems = [];
   let products = 0;
@@ -1000,7 +1010,7 @@ var planOf = (id, file, text) => {
   const { meta, body } = parseDoc(text);
   return { id: meta.id ? String(meta.id) : id, file, meta: { title: meta.title ? String(meta.title) : void 0 }, sections: splitSections(body).map((s) => ({ title: s.title, body: s.body })) };
 };
-function loadPlans(source, { hubDir = HUB_DIR, plansDir = null } = {}) {
+function loadPlans(source, { hubDir = resolveHubDir((p) => source.isDir(p)).hubDir, plansDir = null } = {}) {
   const plans = [];
   for (const id of source.list(hubDir).sort()) {
     const file = joinPath(hubDir, id, "business-product/business-plan.md");
@@ -1039,7 +1049,7 @@ function reportProduct(p) {
     findings: p.findings.map(({ kind, area, text, file }) => ({ kind, area, text, file }))
   };
 }
-function hubReport(source, { hubDir = HUB_DIR, only = null, plansDir = null, newCommand, today, template = null } = {}) {
+function hubReport(source, { hubDir = resolveHubDir((p) => source.isDir(p)).hubDir, only = null, plansDir = null, newCommand, today, template = null } = {}) {
   const { problems } = checkHub(source, { hubDir, only, newCommand, template });
   const { products, errors } = loadProductDocs(source, { hubDir, plans: loadPlans(source, { hubDir, plansDir }), today });
   const picked = products.filter((p) => !only || p.id === only).map(reportProduct);
@@ -1146,7 +1156,7 @@ function appProjects(source) {
     return { dir: `apps/${d}`, names: [pkg.nx?.name, pkg.name, d].filter((x) => !!x), pkg, text };
   });
 }
-function planNew(source, opts, { today = (/* @__PURE__ */ new Date()).toISOString().slice(0, 10), hubDir = HUB_DIR, template, templateLabel, teams = null, plansDir = PLANS_DIR, movedPathsFile = null, command = "canon new" } = {}) {
+function planNew(source, opts, { today = (/* @__PURE__ */ new Date()).toISOString().slice(0, 10), hubDir = resolveHubDir((p) => source.isDir(p)).hubDir, template, templateLabel, teams = null, plansDir = PLANS_DIR, movedPathsFile = null, command = "canon new" } = {}) {
   const errors = [];
   const id = opts.id || "";
   const name = opts.name || titleCase(id);
@@ -1615,6 +1625,11 @@ function guarded(label, err, run) {
     return EXIT_INTERNAL;
   }
 }
+function hubDirOf(root, label, err) {
+  const { hubDir, legacy } = resolveHubDir((p) => nodeSource(root).isDir(p));
+  if (legacy) err(`${label} \u2013 note: ${legacyHubNotice()}`);
+  return hubDir;
+}
 function runCheck(argv, o = {}) {
   const { label = "canon check", err = console.error } = o;
   return guarded(label, err, () => check(argv, o));
@@ -1624,7 +1639,7 @@ function check(argv, { root: defaultRoot = process.cwd(), label = "canon check",
   let all = false;
   let json = false;
   let root = defaultRoot;
-  let hubDir = HUB_DIR;
+  let hubDir = null;
   let plansDir = null;
   let today = defaultToday ?? (/* @__PURE__ */ new Date()).toISOString().slice(0, 10);
   const fail = (msg) => {
@@ -1650,6 +1665,7 @@ function check(argv, { root: defaultRoot = process.cwd(), label = "canon check",
   }
   if (only && all) return fail("give a product id or --all, not both");
   if (!only && !all) return fail("missing <id> or --all");
+  if (hubDir == null) hubDir = hubDirOf(root, label, err);
   if (only && !existsSync3(join3(root, hubDir, only))) {
     err(`${label} \u2013 no product folder ${hubDir}/${only} (${usage})`);
     return 2;
@@ -1675,7 +1691,7 @@ function runNew(argv, o = {}) {
 }
 function scaffold(argv, o) {
   const r = (code, summary = null) => ({ code, summary });
-  const { root: defaultRoot = process.cwd(), label = "canon new", command = "canon new", usage = USAGE_NEW, checkLabel = "canon check", newCommand, defaultTeam = null, ignoreReferences = [], next, today, log = console.log, err = console.error, teams, movedPathsFile, plansDir = PLANS_DIR, hubDir = HUB_DIR } = o;
+  const { root: defaultRoot = process.cwd(), label = "canon new", command = "canon new", usage = USAGE_NEW, checkLabel = "canon check", newCommand, defaultTeam = null, ignoreReferences = [], next, today, log = console.log, err = console.error, teams, movedPathsFile, plansDir = PLANS_DIR } = o;
   const parsed = parseNewArgs(argv, { defaultTeam });
   if (parsed.error != null) {
     err(`${label} \u2013 ${parsed.error}
@@ -1684,6 +1700,7 @@ ${usage}`);
   }
   const { opts } = parsed;
   const root = opts.root ? resolve2(opts.root) : defaultRoot;
+  const hubDir = o.hubDir ?? hubDirOf(root, label, err);
   const source = nodeSource(root);
   const own = source.isDir(`${hubDir}/_template`);
   const bundled = nodeSource(BUNDLED_TEMPLATE_DIR);
@@ -1721,7 +1738,7 @@ function runInit(argv, o = {}) {
   return guarded(initLabel, err, () => init(argv, o));
 }
 function init(argv, o) {
-  const { initLabel = "canon init", initUsage = USAGE_INIT, log = console.log, err = console.error, hubDir = HUB_DIR, env = process.env, newCommand } = o;
+  const { initLabel = "canon init", initUsage = USAGE_INIT, log = console.log, err = console.error, env = process.env, newCommand } = o;
   let json = false;
   let hqFlag = o.hq ?? null;
   let noHq = false;
@@ -1750,6 +1767,8 @@ ${initUsage}`);
     return 2;
   }
   const root = parsed.opts.root ? resolve2(parsed.opts.root) : o.root ?? process.cwd();
+  const hubDir = o.hubDir ?? hubDirOf(root, initLabel, err);
+  o = { ...o, hubDir };
   const today = o.today ?? (/* @__PURE__ */ new Date()).toISOString().slice(0, 10);
   const captured = [];
   const ports = {

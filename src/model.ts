@@ -8,8 +8,26 @@
  * hub folder are in readers.ts; the package entry is index.ts.
  */
 
-/** Default folder that holds one sub-folder per product. */
-export const HUB_DIR = 'docs/product-hub';
+/** Folder of everything a Crafthall product writes into a repository: one sub-folder per product (canon, hq, …). */
+export const CRAFTHALL_DIR = 'docs/crafthall';
+/** Default folder that holds one sub-folder per product: Canon's own folder under docs/crafthall/. */
+export const HUB_DIR = `${CRAFTHALL_DIR}/canon`;
+/** Where the hub lived up to 0.2.x; still read when the repository has no hub at HUB_DIR. */
+export const LEGACY_HUB_DIR = 'docs/product-hub';
+
+/**
+ * The hub folder of a repository: HUB_DIR when it exists or when neither folder exists (a new hub), else the legacy
+ * docs/product-hub/ of 0.2.x (`legacy: true`, so a host can tell the user to move it).
+ */
+export function resolveHubDir(isDir: (path: string) => boolean): { hubDir: string; legacy: boolean } {
+  if (!isDir(HUB_DIR) && isDir(LEGACY_HUB_DIR)) return { hubDir: LEGACY_HUB_DIR, legacy: true };
+  return { hubDir: HUB_DIR, legacy: false };
+}
+
+/** The one-line notice for a hub still at the legacy folder: where it is and the command that moves it. */
+export function legacyHubNotice(): string {
+  return `the hub is at ${LEGACY_HUB_DIR}/, the location used up to 0.2.x – move it with: mkdir -p ${CRAFTHALL_DIR} && git mv ${LEGACY_HUB_DIR} ${HUB_DIR}`;
+}
 /** Product status in the hub README front matter; `paused` and `retired` are not assessed. */
 export const PRODUCT_STATUSES = ['idea', 'validation', 'building', 'live', 'paused', 'retired'] as const;
 export const FEATURE_STATUSES = ['specified', 'building', 'built', 'partial', 'later', 'removed'] as const;

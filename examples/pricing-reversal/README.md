@@ -1,6 +1,6 @@
 # Worked example: a pricing decision is reversed
 
-Supperwick is a fictional weekly meal planner (`supperwick.example`). Its hub is in two states: [`before/`](before/docs/product-hub/supperwick/README.md) and [`after/`](after/docs/product-hub/supperwick/README.md). Each folder is a small repository root, so `canon check supperwick --root <folder>` runs on it as it is.
+Supperwick is a fictional weekly meal planner (`supperwick.example`). Its hub is in two states: [`before/`](before/docs/crafthall/canon/supperwick/README.md) and [`after/`](after/docs/crafthall/canon/supperwick/README.md). Each folder is a small repository root, so `canon check supperwick --root <folder>` runs on it as it is.
 
 ## The decision change
 
@@ -16,7 +16,7 @@ The team marked ADR-0001 as superseded and linked both records both ways. They r
 
 The release plan restates a topic that `monetization.md` owns. The structure rule `topic` fails the check (exit 1) with this message:
 
-> docs/product-hub/supperwick: topic "free and paid plans" is a main section in business-product/monetization.md and business-product/releases/r1-launch.md – keep it in one page and link from the others
+> docs/crafthall/canon/supperwick: topic "free and paid plans" is a main section in business-product/monetization.md and business-product/releases/r1-launch.md – keep it in one page and link from the others
 
 The check cannot tell that the copy is out of date. It flags the duplicate, and the duplicate is where the outdated policy was hiding. Every other rule and health check passes on `before/`: the records link both ways, and the catalog's status column (`built`) matches the feature pages.
 
