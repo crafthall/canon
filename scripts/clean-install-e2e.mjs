@@ -134,7 +134,7 @@ check(report !== null, 'canon check --json prints one JSON report');
 check(report?.ok === true && report?.problems?.length === 0, `report ok with 0 problems (got ok=${report?.ok}, problems=${report?.problems?.length})`);
 check(report?.schemaVersion === 1, 'report schemaVersion 1');
 check(report?.products?.length === 1 && report.products[0].id === 'acme-notes' && report.products[0].stage === 'validation', 'one product acme-notes at stage validation');
-const installed = join(repo, 'node_modules', '@crafthall', 'product-hub');
+const installed = join(repo, 'node_modules', '@crafthall', 'canon');
 const ipkg = existsSync(join(installed, 'package.json')) ? JSON.parse(readFileSync(join(installed, 'package.json'), 'utf8')) : {};
 check(`v${ipkg.version}` === REF || !/^v\d/.test(REF), `installed version ${ipkg.version} matches ${REF}`);
 check(existsSync(join(installed, 'dist', 'cli.js')) && !existsSync(join(installed, 'src')), 'installed copy runs dist/ (no src/ shipped)');
