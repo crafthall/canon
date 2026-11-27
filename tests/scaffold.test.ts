@@ -5,7 +5,7 @@ import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, posix } from 'node:path';
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
-import { checkHub, frontKeys, linkTargets, memorySource, normalizePath, overlaySource, parseNewArgs, planNew, rebaseLinks, relativePath, type NewOptions } from '../src/index';
+import { allowedFile, checkHub, frontKeys, LAYOUT, linkTargets, memorySource, normalizePath, overlaySource, parseNewArgs, planNew, rebaseLinks, relativePath, type NewOptions } from '../src/index';
 import { BUNDLED_TEMPLATE_DIR, nodeSource } from '../src/node';
 
 const files = (dir: string, prefix = ''): string[] =>
@@ -62,6 +62,20 @@ describe('bundled template', () => {
       expect(Object.keys(frontKeys(text) || {}), f).toEqual(expect.arrayContaining(['product', 'page', 'status', 'updated']));
       expect(headings(text).length, f).toBeGreaterThan(0);
     }
+  });
+
+  it('has a page for every fixed layout page and every open folder, the business plan excepted (it needs real numbers)', () => {
+    const untemplated = new Set(['business-product/business-plan.md', 'business-product/business-model.json']);
+    for (const f of LAYOUT.files) if (!untemplated.has(f)) expect(bundled, f).toContain(f);
+    for (const re of [/^business-product\/releases\//, /^business-product\/features\/(?!README|candidates)/, /^architecture-engineering\/decisions\/\d{4}-/, /^architecture-engineering\/technical\/[^/]+\.md$/]) {
+      expect(bundled.some((f) => re.test(f)), String(re)).toBe(true);
+    }
+    expect(bundled.filter((f) => !allowedFile(f))).toEqual([]);
+  });
+
+  it('copied whole into <hubDir>/_template/ it passes the structure check (layout, front matter, links, one topic per page)', () => {
+    const repo = memorySource(Object.fromEntries(bundled.map((f) => [`docs/product-hub/_template/${f}`, readFileSync(join(BUNDLED_TEMPLATE_DIR, f), 'utf8')])));
+    expect(checkHub(repo).problems).toEqual([]);
   });
 
   it('links only inside the product folder (it must work in a repo with no other docs)', () => {
