@@ -22,7 +22,7 @@ export interface ChangeCoupledInput {
   projects: readonly TaggedProject[];
   /** Text that may state the escape (PR body, commit messages); empty or absent = none. */
   text?: string | null;
-  /** Folder with one folder per product (default docs/product-hub). */
+  /** Folder with one folder per product (default docs/crafthall/canon). */
   hubDir?: string;
 }
 

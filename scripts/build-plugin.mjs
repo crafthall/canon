@@ -5,7 +5,7 @@
 // The launcher plugin/scripts/hub.mjs (hand-written, three lines) imports it and calls pluginMain: a separate file, so
 // the CLI's own "run when invoked" check (argv[1] = the module file) is false inside the bundle.
 // It also copies the page template (template/ → plugin/template/), which `canon new` and `canon init` use in a repository
-// without its own docs/product-hub/_template/: the bundle finds it next to scripts/ as the source tree does next to src/.
+// without its own docs/crafthall/canon/_template/: the bundle finds it next to scripts/ as the source tree does next to src/.
 // A copy, not a link: Claude Code drops symbolic links that point out of an installed plugin's folder.
 // Both are committed; tests/plugin.test.ts builds them again and fails when the committed copy is stale.
 //   node scripts/build-plugin.mjs              (npm run build:plugin)

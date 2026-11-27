@@ -12,7 +12,7 @@ export interface HubSource {
   isDir(path: string): boolean;
 }
 
-/** A source over an in-memory map `{ 'docs/product-hub/demo/README.md': '…' }`; folders are implied by the paths. */
+/** A source over an in-memory map `{ 'docs/crafthall/canon/demo/README.md': '…' }`; folders are implied by the paths. */
 export function memorySource(files: Readonly<Record<string, string>>): HubSource {
   const dirs = new Map<string, Set<string>>();
   for (const p of Object.keys(files)) {

@@ -138,7 +138,7 @@ const installed = join(repo, 'node_modules', '@crafthall', 'canon');
 const ipkg = existsSync(join(installed, 'package.json')) ? JSON.parse(readFileSync(join(installed, 'package.json'), 'utf8')) : {};
 check(`v${ipkg.version}` === REF || !/^v\d/.test(REF), `installed version ${ipkg.version} matches ${REF}`);
 check(existsSync(join(installed, 'dist', 'cli.js')) && !existsSync(join(installed, 'src')), 'installed copy runs dist/ (no src/ shipped)');
-check(existsSync(join(repo, 'docs', 'product-hub', 'acme-notes', 'README.md')), 'docs/product-hub/acme-notes/README.md created');
+check(existsSync(join(repo, 'docs', 'crafthall', 'canon', 'acme-notes', 'README.md')), 'docs/crafthall/canon/acme-notes/README.md created');
 const lock = JSON.parse(readFileSync(join(repo, 'package-lock.json'), 'utf8'));
 const resolved = lock.packages?.['node_modules/@crafthall/canon']?.resolved ?? '';
 check(/#[0-9a-f]{40}$/.test(resolved), `package-lock pins a commit (${resolved})`);

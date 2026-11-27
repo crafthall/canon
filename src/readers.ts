@@ -1,12 +1,12 @@
 /**
  * Canon readers (moved from Spark Hall's lib/product-docs.mjs): read a hub folder
- * docs/product-hub/<id>/ through a `HubSource`, parse its pages and build one product – documents, feature catalog,
+ * docs/crafthall/canon/<id>/ through a `HubSource`, parse its pages and build one product – documents, feature catalog,
  * decision records, findings and documentation health. Files are the only source of truth; nothing is hand-entered
  * or estimated. Rendering (Markdown → HTML, in-app links) stays with the host: pass `render`; the default keeps
  * Markdown as is. Pure apart from the reads of the given source.
  */
 import { parseDoc, splitSections, type DocSection, type YamlValue } from './front-matter.ts';
-import { ADR_STATUSES, FEATURE_STATUSES, HUB_DIR, HUB_PATHS, PRODUCT_STATUSES, RESERVED_IDS, STAGES, STAGE_OF_STATUS, WORKFLOW_PAGES, healthOf, type Health } from './model.ts';
+import { ADR_STATUSES, FEATURE_STATUSES, HUB_PATHS, PRODUCT_STATUSES, RESERVED_IDS, STAGES, STAGE_OF_STATUS, WORKFLOW_PAGES, healthOf, type Health, resolveHubDir } from './model.ts';
 import { joinPath, type HubSource } from './source.ts';
 
 /** Every kind of health finding (the `--json` contract carries them; the fixture tripwire asserts this list). */
@@ -607,7 +607,7 @@ export interface ReadOptions {
   ruleFiles?: Readonly<Record<string, string>>;
 }
 
-/** Reads the sources of one product folder in the hub layout (`dir` repo-relative, e.g. docs/product-hub/<id>). */
+/** Reads the sources of one product folder in the hub layout (`dir` repo-relative, e.g. docs/crafthall/canon/<id>). */
 export function readHubProduct(source: HubSource, dir: string, { ruleFiles }: ReadOptions = {}): HubProductSource {
   const p = (k: keyof typeof HUB_PATHS) => joinPath(dir, HUB_PATHS[k]);
   const list = (d: string, skip: string[] = []): FileText[] =>
@@ -641,7 +641,7 @@ export function readHubProduct(source: HubSource, dir: string, { ruleFiles }: Re
 }
 
 /** Product folder ids with a README.md under `hubDir` (folders starting with "_", e.g. _template, and RESERVED_IDS are skipped). */
-export function productIds(source: HubSource, hubDir: string = HUB_DIR): string[] {
+export function productIds(source: HubSource, hubDir: string = resolveHubDir((p) => source.isDir(p)).hubDir): string[] {
   if (!source.isDir(hubDir)) return [];
   return source
     .list(hubDir)
@@ -650,12 +650,12 @@ export function productIds(source: HubSource, hubDir: string = HUB_DIR): string[
 }
 
 export interface LoadOptions extends BuildOptions, ReadOptions {
-  /** Repo-relative folder holding one folder per product (default docs/product-hub). */
+  /** Repo-relative folder holding one folder per product (default: docs/crafthall/canon, or the legacy docs/product-hub when only that exists). */
   hubDir?: string;
 }
 
 /** Reads and builds every product folder under `hubDir`. A folder that fails to build is reported in `errors`. */
-export function loadProductDocs(source: HubSource, { hubDir = HUB_DIR, plans = [], render, rules, ruleFiles, today }: LoadOptions = {}): { products: Product[]; errors: string[] } {
+export function loadProductDocs(source: HubSource, { hubDir = resolveHubDir((p) => source.isDir(p)).hubDir, plans = [], render, rules, ruleFiles, today }: LoadOptions = {}): { products: Product[]; errors: string[] } {
   const errors: string[] = [];
   const products: Product[] = [];
   for (const id of productIds(source, hubDir)) {

@@ -14,11 +14,11 @@ import { join } from 'node:path';
 const HERE = import.meta.dirname;
 const CLI = join(HERE, '../../src/cli.ts');
 const ID = 'supperwick';
-const HUB = `docs/product-hub/${ID}`;
+const HUB = `docs/crafthall/canon/${ID}`;
 // The story's date (the fix lands 2026-04-22): pinned so freshness findings never depend on the day the replay runs.
 const TODAY = '2026-04-25';
 const EXPECTED_TOPIC =
-  'docs/product-hub/supperwick: topic "free and paid plans" is a main section in business-product/monetization.md and business-product/releases/r1-launch.md – keep it in one page and link from the others';
+  'docs/crafthall/canon/supperwick: topic "free and paid plans" is a main section in business-product/monetization.md and business-product/releases/r1-launch.md – keep it in one page and link from the others';
 const EXPECTED_CHANGED = [`${HUB}/README.md`, `${HUB}/business-product/features/README.md`, `${HUB}/business-product/releases/r1-launch.md`];
 const STALE_PLAN_CELL = 'Plus only (ADR-0001)';
 

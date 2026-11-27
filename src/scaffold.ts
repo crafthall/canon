@@ -6,7 +6,7 @@
  * Never overwrites: an existing or reserved id, an invalid id or an app of another product stop it before any write.
  */
 import { normalizePath, REQUIREMENT_FILES, frontKeys } from './check.ts';
-import { HUB_DIR, LEVEL_LABEL, REQUIREMENTS, RESERVED_IDS, STAGES, STAGE_OF_STATUS, type Level } from './model.ts';
+import { LEVEL_LABEL, REQUIREMENTS, RESERVED_IDS, STAGES, STAGE_OF_STATUS, type Level, resolveHubDir } from './model.ts';
 import { joinPath, type HubSource } from './source.ts';
 
 export const ID_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -184,7 +184,7 @@ function appProjects(source: HubSource): AppProject[] {
  * { kind: 'write', path, text } (new file), { kind: 'mv', from, to } (git mv), { kind: 'edit', path, text, note }
  * (existing file), { kind: 'rmdir', path } – all paths repo-relative.
  */
-export function planNew(source: HubSource, opts: NewOptions, { today = new Date().toISOString().slice(0, 10), hubDir = HUB_DIR, template, templateLabel, teams = null, plansDir = PLANS_DIR, movedPathsFile = null, command = 'canon new' }: PlanNewOptions = {}): { errors: string[]; actions: ScaffoldAction[]; summary: ScaffoldSummary | null } {
+export function planNew(source: HubSource, opts: NewOptions, { today = new Date().toISOString().slice(0, 10), hubDir = resolveHubDir((p) => source.isDir(p)).hubDir, template, templateLabel, teams = null, plansDir = PLANS_DIR, movedPathsFile = null, command = 'canon new' }: PlanNewOptions = {}): { errors: string[]; actions: ScaffoldAction[]; summary: ScaffoldSummary | null } {
   const errors: string[] = [];
   const id = opts.id || '';
   const name = opts.name || titleCase(id);

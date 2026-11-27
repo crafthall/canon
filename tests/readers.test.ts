@@ -133,7 +133,7 @@ describe('tables and statuses', () => {
 });
 
 // A valid hub at the Development stage with every page it can have, in memory.
-const D = 'docs/product-hub/demo';
+const D = 'docs/crafthall/canon/demo';
 const page = (name: string, body = 'Body.', status = 'current') => `---\nproduct: demo\npage: ${name}\nstatus: ${status}\nupdated: 2026-11-20\n---\n\n# Demo – ${name}\n\n${body}\n`;
 const feature = (slug: string, status: string, extra = '') => `---\nfeature: ${slug}\nproduct: demo\npage: feature\nstatus: ${status}\nissues: [1]\nupdated: 2026-11-20\n${extra}---\n\n# ${slug}\n\n## What it does\n${slug} does a thing.\n`;
 const adr = (n: number, status: string, links = '') => `---\nadr: ${n}\ntitle: Decision ${n}\nstatus: ${status}\ndate: 2026-11-20\n${links}---\n\n# ADR-000${n}\n\nBody.\n`;
@@ -281,7 +281,7 @@ describe('every finding kind, both ways', () => {
 
 describe('sources', () => {
   it('reads a hub only through the given source', () => {
-    const src = memorySource({ ...validHub(), 'docs/product-hub/_template/README.md': README, 'docs/product-hub/framework/README.md': README, 'docs/product-hub/no-readme/x.md': 'x' });
+    const src = memorySource({ ...validHub(), 'docs/crafthall/canon/_template/README.md': README, 'docs/crafthall/canon/framework/README.md': README, 'docs/crafthall/canon/no-readme/x.md': 'x' });
     expect(productIds(src)).toEqual(['demo']);
     const s = readHubProduct(src, D);
     expect(s.features?.map((f) => f.file)).toEqual([`${D}/business-product/features/later.md`, `${D}/business-product/features/scan.md`]);

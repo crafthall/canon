@@ -53,7 +53,7 @@ export interface MatchResult {
   threshold: number;
 }
 
-/** The feature catalog of a product folder (`dir`, repo-relative, e.g. docs/product-hub/acme): rows with a page. */
+/** The feature catalog of a product folder (`dir`, repo-relative, e.g. docs/crafthall/canon/acme): rows with a page. */
 export function readCatalog(source: HubSource, dir: string): CatalogFeature[] {
   const index = source.read(joinPath(dir, 'business-product/features/README.md'));
   if (index == null) return [];

@@ -10,63 +10,63 @@
   "problems": [
     {
       "rule": "front-matter",
-      "file": "docs/product-hub/acme-lambda/README.md",
-      "message": "docs/product-hub/acme-lambda/README.md: front matter says product \"acme-mu\" in folder \"acme-lambda\""
+      "file": "docs/crafthall/canon/acme-lambda/README.md",
+      "message": "docs/crafthall/canon/acme-lambda/README.md: front matter says product \"acme-mu\" in folder \"acme-lambda\""
     },
     {
       "rule": "front-matter",
-      "file": "docs/product-hub/acme-lambda/architecture-engineering/components-and-data-flows.md",
-      "message": "docs/product-hub/acme-lambda/architecture-engineering/components-and-data-flows.md: \"updated\" must be a date YYYY-MM-DD"
+      "file": "docs/crafthall/canon/acme-lambda/architecture-engineering/components-and-data-flows.md",
+      "message": "docs/crafthall/canon/acme-lambda/architecture-engineering/components-and-data-flows.md: \"updated\" must be a date YYYY-MM-DD"
     },
     {
       "rule": "front-matter",
-      "file": "docs/product-hub/acme-lambda/architecture-engineering/overview.md",
-      "message": "docs/product-hub/acme-lambda/architecture-engineering/overview.md: front matter misses updated"
+      "file": "docs/crafthall/canon/acme-lambda/architecture-engineering/overview.md",
+      "message": "docs/crafthall/canon/acme-lambda/architecture-engineering/overview.md: front matter misses updated"
     },
     {
       "rule": "front-matter",
-      "file": "docs/product-hub/acme-lambda/architecture-engineering/technical/limits.md",
-      "message": "docs/product-hub/acme-lambda/architecture-engineering/technical/limits.md: no front matter (product, page, status, updated)"
+      "file": "docs/crafthall/canon/acme-lambda/architecture-engineering/technical/limits.md",
+      "message": "docs/crafthall/canon/acme-lambda/architecture-engineering/technical/limits.md: no front matter (product, page, status, updated)"
     },
     {
       "rule": "layout",
-      "file": "docs/product-hub/acme-lambda/business-product/drafts/",
-      "message": "docs/product-hub/acme-lambda/business-product/drafts/: folder not in the product hub layout"
+      "file": "docs/crafthall/canon/acme-lambda/business-product/drafts/",
+      "message": "docs/crafthall/canon/acme-lambda/business-product/drafts/: folder not in the product hub layout"
     },
     {
       "rule": "link",
-      "file": "docs/product-hub/acme-lambda/business-product/features/README.md",
-      "message": "docs/product-hub/acme-lambda/business-product/features/README.md: broken link \"ghost-feature.md\""
+      "file": "docs/crafthall/canon/acme-lambda/business-product/features/README.md",
+      "message": "docs/crafthall/canon/acme-lambda/business-product/features/README.md: broken link \"ghost-feature.md\""
     },
     {
       "rule": "link",
-      "file": "docs/product-hub/acme-lambda/business-product/features/candidates.md",
-      "message": "docs/product-hub/acme-lambda/business-product/features/candidates.md: broken link \"gamma.md\""
+      "file": "docs/crafthall/canon/acme-lambda/business-product/features/candidates.md",
+      "message": "docs/crafthall/canon/acme-lambda/business-product/features/candidates.md: broken link \"gamma.md\""
     },
     {
       "rule": "catalog",
-      "file": "docs/product-hub/acme-lambda/business-product/features/README.md",
-      "message": "docs/product-hub/acme-lambda/business-product/features/README.md: catalog row links ghost-feature.md, which does not exist"
+      "file": "docs/crafthall/canon/acme-lambda/business-product/features/README.md",
+      "message": "docs/crafthall/canon/acme-lambda/business-product/features/README.md: catalog row links ghost-feature.md, which does not exist"
     },
     {
       "rule": "adr-index",
-      "file": "docs/product-hub/acme-lambda/architecture-engineering/decisions/0001-first.md",
-      "message": "docs/product-hub/acme-lambda/architecture-engineering/decisions/0001-first.md: decision record without architecture-engineering/decisions/README.md"
+      "file": "docs/crafthall/canon/acme-lambda/architecture-engineering/decisions/0001-first.md",
+      "message": "docs/crafthall/canon/acme-lambda/architecture-engineering/decisions/0001-first.md: decision record without architecture-engineering/decisions/README.md"
     },
     {
       "rule": "adr-index",
-      "file": "docs/product-hub/acme-lambda/architecture-engineering/decisions/0002-second.md",
-      "message": "docs/product-hub/acme-lambda/architecture-engineering/decisions/0002-second.md: decision record without architecture-engineering/decisions/README.md"
+      "file": "docs/crafthall/canon/acme-lambda/architecture-engineering/decisions/0002-second.md",
+      "message": "docs/crafthall/canon/acme-lambda/architecture-engineering/decisions/0002-second.md: decision record without architecture-engineering/decisions/README.md"
     },
     {
       "rule": "adr-index",
-      "file": "docs/product-hub/acme-lambda/architecture-engineering/decisions/0003-third.md",
-      "message": "docs/product-hub/acme-lambda/architecture-engineering/decisions/0003-third.md: decision record without architecture-engineering/decisions/README.md"
+      "file": "docs/crafthall/canon/acme-lambda/architecture-engineering/decisions/0003-third.md",
+      "message": "docs/crafthall/canon/acme-lambda/architecture-engineering/decisions/0003-third.md: decision record without architecture-engineering/decisions/README.md"
     },
     {
       "rule": "adr-index",
-      "file": "docs/product-hub/acme-lambda/architecture-engineering/decisions/0004-fourth.md",
-      "message": "docs/product-hub/acme-lambda/architecture-engineering/decisions/0004-fourth.md: decision record without architecture-engineering/decisions/README.md"
+      "file": "docs/crafthall/canon/acme-lambda/architecture-engineering/decisions/0004-fourth.md",
+      "message": "docs/crafthall/canon/acme-lambda/architecture-engineering/decisions/0004-fourth.md: decision record without architecture-engineering/decisions/README.md"
     },
     {
       "rule": "package-json",
@@ -75,8 +75,8 @@
     },
     {
       "rule": "app",
-      "file": "docs/product-hub/acme-lambda/README.md",
-      "message": "docs/product-hub/acme-lambda/README.md: names apps/acme-missing, which does not exist"
+      "file": "docs/crafthall/canon/acme-lambda/README.md",
+      "message": "docs/crafthall/canon/acme-lambda/README.md: names apps/acme-missing, which does not exist"
     }
   ],
   "products": [
@@ -91,7 +91,7 @@
           "kind": "inconsistent",
           "area": "overview",
           "text": "README front matter does not parse: line 3: quote values containing \": \" or \" #\": Acme: Kappa",
-          "file": "docs/product-hub/acme-kappa/README.md"
+          "file": "docs/crafthall/canon/acme-kappa/README.md"
         }
       ]
     },
@@ -106,73 +106,73 @@
           "kind": "inconsistent",
           "area": "overview",
           "text": "README says product “acme-mu” in folder “acme-lambda”.",
-          "file": "docs/product-hub/acme-lambda/README.md"
+          "file": "docs/crafthall/canon/acme-lambda/README.md"
         },
         {
           "kind": "missing",
           "area": "catalog",
           "text": "Feature table links features/ghost-feature.md, which does not exist.",
-          "file": "docs/product-hub/acme-lambda/business-product/features/README.md"
+          "file": "docs/crafthall/canon/acme-lambda/business-product/features/README.md"
         },
         {
           "kind": "inconsistent",
           "area": "catalog",
           "text": "features/alpha.md is the first link of 2 rows in the feature table (duplicate rows).",
-          "file": "docs/product-hub/acme-lambda/business-product/features/README.md"
+          "file": "docs/crafthall/canon/acme-lambda/business-product/features/README.md"
         },
         {
           "kind": "inconsistent",
           "area": "catalog",
           "text": "“Beta” has status “none”; use one of specified, building, built, partial, later, removed and put the detail in the text.",
-          "file": "docs/product-hub/acme-lambda/business-product/features/beta.md"
+          "file": "docs/crafthall/canon/acme-lambda/business-product/features/beta.md"
         },
         {
           "kind": "inconsistent",
           "area": "catalog",
           "text": "Front matter does not parse: line 5: unterminated flow list: [unterminated",
-          "file": "docs/product-hub/acme-lambda/business-product/features/beta.md"
+          "file": "docs/crafthall/canon/acme-lambda/business-product/features/beta.md"
         },
         {
           "kind": "inconsistent",
           "area": "adr",
           "text": "ADR-0001 is superseded but names no successor.",
-          "file": "docs/product-hub/acme-lambda/architecture-engineering/decisions/0001-first.md"
+          "file": "docs/crafthall/canon/acme-lambda/architecture-engineering/decisions/0001-first.md"
         },
         {
           "kind": "missing",
           "area": "adr",
           "text": "ADR-0002 is superseded by ADR-9, which does not exist.",
-          "file": "docs/product-hub/acme-lambda/architecture-engineering/decisions/0002-second.md"
+          "file": "docs/crafthall/canon/acme-lambda/architecture-engineering/decisions/0002-second.md"
         },
         {
           "kind": "inconsistent",
           "area": "adr",
           "text": "ADR-0003 names ADR-0004 as successor, but ADR-0004 does not list it under supersedes.",
-          "file": "docs/product-hub/acme-lambda/architecture-engineering/decisions/0004-fourth.md"
+          "file": "docs/crafthall/canon/acme-lambda/architecture-engineering/decisions/0004-fourth.md"
         },
         {
           "kind": "missing",
           "area": "adr",
           "text": "ADR-0004 supersedes ADR-8, which does not exist.",
-          "file": "docs/product-hub/acme-lambda/architecture-engineering/decisions/0004-fourth.md"
+          "file": "docs/crafthall/canon/acme-lambda/architecture-engineering/decisions/0004-fourth.md"
         },
         {
           "kind": "missing",
           "area": "catalog",
           "text": "Candidate “Gamma” links features/gamma.md, which does not exist.",
-          "file": "docs/product-hub/acme-lambda/business-product/features/candidates.md"
+          "file": "docs/crafthall/canon/acme-lambda/business-product/features/candidates.md"
         },
         {
           "kind": "stale",
           "area": "overview",
           "text": "Product README is still a draft (draft: true) – confirm the content and remove draft: true.",
-          "file": "docs/product-hub/acme-lambda/README.md"
+          "file": "docs/crafthall/canon/acme-lambda/README.md"
         },
         {
           "kind": "stale",
           "area": "catalog",
           "text": "Feature “alpha” is still a draft (draft: true) – confirm the content and remove draft: true.",
-          "file": "docs/product-hub/acme-lambda/business-product/features/alpha.md"
+          "file": "docs/crafthall/canon/acme-lambda/business-product/features/alpha.md"
         }
       ]
     }

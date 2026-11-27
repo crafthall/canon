@@ -98,16 +98,16 @@ describe('canon init end to end in a clean repository', () => {
     results.forEach((r, i) => expect(r.code, `${path[i].join(' ')}\n${r.out}${r.err}`).toBe(0));
     const init = results[1].out;
     expect(init).toMatch(/^canon init – Demo Calc \(demo-calc\):$/m);
-    expect(init).toMatch(/^ {2}1\. scaffold +done +created docs\/product-hub\/demo-calc\/ at Idea/m);
+    expect(init).toMatch(/^ {2}1\. scaffold +done +created docs\/crafthall\/canon\/demo-calc\/ at Idea/m);
     expect(init).toMatch(/^ {2}2\. bootstrap +skipped +the repository has no content/m);
     expect(init).toMatch(/^ {2}3\. agent-rules +done +created CLAUDE\.md with the Canon agent rules$/m);
     expect(init).toMatch(/^ {2}4\. hq-check +skipped +Crafthall HQ is not installed \(no Claude Code plugin crafthall-hq, no crafthall-hq on PATH, no --hq\)$/m);
     expect(init).toMatch(/^ {2}5\. optimize-baseline skipped +Crafthall Optimize has no free, offline baseline command yet/m);
-    expect(init).toMatch(/^ {2}6\. summary +done +HQ result recorded in docs\/product-hub\/demo-calc\/README\.md \(Status, Changelog\); canon check demo-calc – OK/m);
+    expect(init).toMatch(/^ {2}6\. summary +done +HQ result recorded in docs\/crafthall\/canon\/demo-calc\/README\.md \(Status, Changelog\); canon check demo-calc – OK/m);
     expect(init.trim().split('\n').pop()).toBe('canon init – OK.');
     expect(results[2].out.trim()).toBe('canon check – OK (1 product folder(s)): structure, lifecycle files, links, catalog, ADR index, app tags, one topic per page.');
 
-    const readme = readFileSync(join(dir, 'docs/product-hub/demo-calc/README.md'), 'utf8');
+    const readme = readFileSync(join(dir, 'docs/crafthall/canon/demo-calc/README.md'), 'utf8');
     expect(readme).toMatch(/^\| Crafthall HQ team check \| not run – Crafthall HQ is not installed .*\|$/m);
     expect(readme).toMatch(/^- \d{4}-\d\d-\d\d – Started as a Crafthall project \(`canon init`\): Crafthall HQ team check not run \(see Status\); Optimize baseline skipped/m);
     expect(readFileSync(join(dir, 'CLAUDE.md'), 'utf8')).toMatch(/^<!-- crafthall-canon:agent-rules v1 -->\n## Product docs \(Crafthall Canon\)/);
@@ -118,7 +118,7 @@ describe('canon init end to end in a clean repository', () => {
     expect([j.code, report.ok, report.problems]).toEqual([0, true, []]);
     expect(report.products[0].findings.map((f) => [f.kind, f.area])).toEqual([['stale', 'overview']]);
     // Everything is committed: nothing outside the hub and CLAUDE.md was written.
-    expect(sh(dir, env, ['git', 'ls-files']).out.trim().split('\n').sort()).toEqual(['CLAUDE.md', 'docs/product-hub/demo-calc/README.md', 'docs/product-hub/demo-calc/business-product/overview.md']);
+    expect(sh(dir, env, ['git', 'ls-files']).out.trim().split('\n').sort()).toEqual(['CLAUDE.md', 'docs/crafthall/canon/demo-calc/README.md', 'docs/crafthall/canon/demo-calc/business-product/overview.md']);
   });
 
   it('HQ installed as a Claude Code plugin: found, run offline (no HQ settings, empty config folder), verdict recorded', () => {
@@ -135,7 +135,7 @@ describe('canon init end to end in a clean repository', () => {
     expect(r.code, r.out + r.err).toBe(0);
     expect(r.out).toMatch(/^ {2}4\. hq-check +done +OK – no conflicts or broken handoffs found in 1 agent \(checked on this machine, nothing sent\)$/m);
     expect(JSON.parse(readFileSync(seen, 'utf8'))).toEqual({ argv: [dir, '--json'], hqVars: [], configEmpty: true, agentRules: true });
-    const readme = readFileSync(join(dir, 'docs/product-hub/team-app/README.md'), 'utf8');
+    const readme = readFileSync(join(dir, 'docs/crafthall/canon/team-app/README.md'), 'utf8');
     expect(readme).toMatch(/^\| Crafthall HQ team check \| OK – no conflicts or broken handoffs found in 1 agent \(checked on this machine, nothing sent\) – \d{4}-\d\d-\d\d, Crafthall HQ 0\.1\.0-test, rules testbuild \|$/m);
     expect(readme).toMatch(/Crafthall HQ team check OK \(offline\)/);
     expect(sh(dir, env, ['canon', 'check', '--all']).code).toBe(0);
@@ -154,7 +154,7 @@ describe('canon init end to end in a clean repository', () => {
     const r = sh(dir, env, ['canon', 'init', 'demo']);
     expect(r.code).toBe(1);
     expect(r.out).toBe('');
-    expect(r.err).toMatch(/docs\/product-hub\/demo\/ already exists – canon init never overwrites/);
+    expect(r.err).toMatch(/docs\/crafthall\/canon\/demo\/ already exists – canon init never overwrites/);
     expect(r.err).toMatch(/^ {2}4\. hq-check +not-run/m);
     expect(snapshot(dir)).toEqual(before);
     expect(existsSync(seen)).toBe(false);
@@ -170,7 +170,7 @@ describe('canon init end to end in a clean repository', () => {
     const r = sh(dir, env, ['canon', 'init', 'old-app', '--json']);
     expect(r.code, r.err).toBe(0);
     const s = JSON.parse(r.out) as InitSummary;
-    expect(s).toMatchObject({ schemaVersion: 1, tool: 'hub', command: 'init', ok: true, id: 'old-app', dir: 'docs/product-hub/old-app', stage: 'Idea', dryRun: false, hq: null });
+    expect(s).toMatchObject({ schemaVersion: 1, tool: 'hub', command: 'init', ok: true, id: 'old-app', dir: 'docs/crafthall/canon/old-app', stage: 'Idea', dryRun: false, hq: null });
     expect(s.steps.map((x) => [x.id, x.status])).toEqual([
       ['scaffold', 'done'],
       ['bootstrap', 'pending'],

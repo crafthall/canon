@@ -1,17 +1,17 @@
 ---
 name: everything-as-code
-description: Keep a Crafthall Canon current in the same change – given the change (a diff, a branch or a description of a feature, price, campaign, gate or decision), list the hub pages it made untrue, update them, add the changelog line, and run the hub check; or state "no product doc change - <reason>" for a change with no product impact. Use before handing over or committing any change to a product that has a hub under docs/product-hub/.
+description: Keep a Crafthall Canon current in the same change – given the change (a diff, a branch or a description of a feature, price, campaign, gate or decision), list the hub pages it made untrue, update them, add the changelog line, and run the hub check; or state "no product doc change - <reason>" for a change with no product impact. Use before handing over or committing any change to a product that has a hub under docs/crafthall/canon/.
 ---
 
 # Every product change lands in the hub
 
 The repository is the single record of the whole product – code, features, prices, channels, gates, decisions. A change that leaves its hub page untrue makes the hub look current while it is not. You update the hub **in the same change**, before you hand it over.
 
-Input: the change (`git diff` against the base branch, or the files you changed in this session) and the product it belongs to (the hub README names the product's code folders). Output: edits inside `docs/product-hub/<id>/` only.
+Input: the change (`git diff` against the base branch, or the files you changed in this session) and the product it belongs to (the hub README names the product's code folders). Output: edits inside `docs/crafthall/canon/<id>/` only.
 
 ## Steps
 
-1. **Find the product.** Read `docs/product-hub/<id>/README.md` for the product whose code or topic the change touches. No hub: say so and point to the skill `project-init`; do not create one unasked.
+1. **Find the product.** Read `docs/crafthall/canon/<id>/README.md` for the product whose code or topic the change touches. No hub: say so and point to the skill `project-init`; do not create one unasked.
 2. **List the pages the change made untrue** – one line each, `page – what is now wrong`:
    - a new or changed feature → `business-product/features/<slug>.md` (what it does, how it works, limits, how it is verified, history) and its row in `business-product/features/README.md`;
    - a price or plan → `business-product/monetization.md`; a channel or campaign → `go-to-market.md` or `marketing.md`; a gate, release or scope → `roadmap.md`; a decision → a decision record in `architecture-engineering/decisions/` and its index;

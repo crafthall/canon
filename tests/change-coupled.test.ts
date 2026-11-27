@@ -9,8 +9,8 @@ const projects: TaggedProject[] = [
   { dir: 'libs/other', product: 'other' },
 ];
 const CODE = 'libs/demo-core/src/index.ts';
-const FEATURE = 'docs/product-hub/demo/business-product/features/search.md';
-const CHANGELOG = 'docs/product-hub/demo/README.md';
+const FEATURE = 'docs/crafthall/canon/demo/business-product/features/search.md';
+const CHANGELOG = 'docs/crafthall/canon/demo/README.md';
 const check = (files: string[], text: string | null = null) => checkChangeCoupled({ files, projects, text });
 
 describe('fixture diffs', () => {
@@ -19,8 +19,8 @@ describe('fixture diffs', () => {
     expect(r.ok).toBe(false);
     expect(r.uncoupled).toEqual(['demo']);
     const [line] = changeCoupledProblems(r);
-    expect(line).toContain('docs/product-hub/demo/business-product/features/<slug>.md');
-    expect(line).toContain('docs/product-hub/demo/README.md');
+    expect(line).toContain('docs/crafthall/canon/demo/business-product/features/<slug>.md');
+    expect(line).toContain('docs/crafthall/canon/demo/README.md');
   });
 
   it('code + hub feature page + changelog passes', () => {
@@ -48,8 +48,8 @@ describe('fixture diffs', () => {
   });
 
   it('the feature catalog README and another product\'s hub do not count', () => {
-    expect(check([CODE, 'docs/product-hub/demo/business-product/features/README.md', CHANGELOG]).ok).toBe(false);
-    expect(check([CODE, 'docs/product-hub/other/business-product/features/x.md', 'docs/product-hub/other/README.md']).ok).toBe(false);
+    expect(check([CODE, 'docs/crafthall/canon/demo/business-product/features/README.md', CHANGELOG]).ok).toBe(false);
+    expect(check([CODE, 'docs/crafthall/canon/other/business-product/features/x.md', 'docs/crafthall/canon/other/README.md']).ok).toBe(false);
   });
 
   it('two products: each needs its own docs', () => {
@@ -96,10 +96,10 @@ describe('properties', () => {
     fc.tuple(segment, segment).map(([a, b]) => `docs/${a}/${b}.md`),
     segment.map((a) => `scripts/${a}.mjs`),
     fc.tuple(segment, segment).map(([a, b]) => `libs/x-${a}/${b}.ts`),
-    segment.map((a) => `docs/product-hub/demo/business-product/${a}.md`),
+    segment.map((a) => `docs/crafthall/canon/demo/business-product/${a}.md`),
   );
   const codeFile = fc.tuple(fc.constantFrom('apps/demo', 'libs/demo-core', 'libs/other'), segment).map(([d, f]) => `${d}/src/${f}.ts`);
-  const docsFor = (ids: string[]) => ids.flatMap((id) => [`docs/product-hub/${id}/README.md`, `docs/product-hub/${id}/business-product/features/f.md`]);
+  const docsFor = (ids: string[]) => ids.flatMap((id) => [`docs/crafthall/canon/${id}/README.md`, `docs/crafthall/canon/${id}/business-product/features/f.md`]);
   // A passing diff: code files plus the hub docs of every product they touch, in any order.
   const passing = fc.array(codeFile, { maxLength: 5 }).map((code) => {
     const ids = [...new Set(code.map((f) => (f.startsWith('libs/other') ? 'other' : 'demo')))];

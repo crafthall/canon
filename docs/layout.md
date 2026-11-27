@@ -1,9 +1,21 @@
 # Layout – one folder, three sections
 
-Every product gets one folder, `docs/product-hub/<id>/`, where `<id>` is one logical product (not an app: a product can span several apps). The source of this layout in code is `SECTIONS` and `HUB_PATHS` in `src/index.ts`.
+Every product gets one folder, `docs/crafthall/canon/<id>/`, where `<id>` is one logical product (not an app: a product can span several apps). The source of this layout in code is `SECTIONS` and `HUB_PATHS` in `src/index.ts`.
+
+## Where Crafthall writes: `docs/crafthall/`
+
+Everything a Crafthall product writes into a repository, and that belongs in version control, lives under `docs/crafthall/`, one folder per product: `docs/crafthall/canon/` for the Canon hub, `docs/crafthall/hq/` for what Crafthall HQ adds to the agent team (teams, team names, agent icons). Local, private state that is never committed stays in `.crafthall/<product>/` at the repository root (for example the Crafthall Optimize store), with its own `.gitignore`.
+
+Up to 0.2.x the hub lived in `docs/product-hub/`. A repository that has only that folder still works: `canon check`, `canon new` and `canon init` read and write it and print a note with the move command:
+
+```bash
+mkdir -p docs/crafthall && git mv docs/product-hub docs/crafthall/canon
+```
+
+A link from a hub README to an app climbs one more level after the move (`../../../../apps/<app>/` instead of `../../../apps/<app>/`); `canon check` reports every link the move broke. `--hub-dir <dir>` still picks any other folder.
 
 ```
-docs/product-hub/<id>/
+docs/crafthall/canon/<id>/
   README.md                         # hub index: status (= stage), apps, links to every page, metrics, changelog
   business-product/
     overview.md                     # what it is, who it is for, the main flow
@@ -57,7 +69,7 @@ docs/product-hub/<id>/
 
 ## App tags
 
-The hub README names the product's code folders (`app:` in its front matter and the "Primary app" row). Each named project in `apps/` or `libs/` carries the tag `product:<id>` in its `package.json` (`"nx": { "tags": ["product:<id>"] }`), and a project with that tag needs the hub `docs/product-hub/<id>/`. `canon check` reports a named folder that does not exist, a named project without the tag (rule `app`), a tagged project without a hub (`tagged-without-hub`) and a `package.json` that is not valid JSON (`package-json`). The change-coupled check uses the same tags to find which product a code change belongs to.
+The hub README names the product's code folders (`app:` in its front matter and the "Primary app" row). Each named project in `apps/` or `libs/` carries the tag `product:<id>` in its `package.json` (`"nx": { "tags": ["product:<id>"] }`), and a project with that tag needs the hub `docs/crafthall/canon/<id>/`. `canon check` reports a named folder that does not exist, a named project without the tag (rule `app`), a tagged project without a hub (`tagged-without-hub`) and a `package.json` that is not valid JSON (`package-json`). The change-coupled check uses the same tags to find which product a code change belongs to.
 
 ## Example front matter
 

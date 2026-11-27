@@ -1,13 +1,13 @@
 ---
 name: hub-check
-description: Check a Crafthall Canon (docs/product-hub/<id>/) for consistency – run the mechanical canon check (structure, lifecycle pages, links, feature catalog, decision index, app tags, one topic per page, plus each product's missing, stale and inconsistent findings), then read the hub pages together and report contradictions and stale facts (roadmap vs decisions, built features vs code, overview vs value proposition, changelog vs recent commits). Use before handing over any change to a product, before a release, and whenever someone asks whether a product's docs are consistent or up to date.
+description: Check a Crafthall Canon (docs/crafthall/canon/<id>/) for consistency – run the mechanical canon check (structure, lifecycle pages, links, feature catalog, decision index, app tags, one topic per page, plus each product's missing, stale and inconsistent findings), then read the hub pages together and report contradictions and stale facts (roadmap vs decisions, built features vs code, overview vs value proposition, changelog vs recent commits). Use before handing over any change to a product, before a release, and whenever someone asks whether a product's docs are consistent or up to date.
 ---
 
 # Canon check (consistency)
 
 A hub that is complete but contradicts itself – a gate marked open that was closed, a feature `built` with no code, a price on two pages that disagree – is worse than a missing page, because it looks trustworthy. The command catches what is mechanical; you catch what needs reading.
 
-Input: one product id or all products (one folder each in the hub folder, `docs/product-hub` by default). Everything runs on this machine; nothing is sent.
+Input: one product id or all products (one folder each in the hub folder, `docs/crafthall/canon` by default). Everything runs on this machine; nothing is sent.
 
 ## 1. Mechanical check
 
@@ -32,7 +32,7 @@ Read the hub README, every `business-product/` page, `architecture-engineering/o
 | S6 | The newest README changelog line | `git log --since=<that date> --oneline -- <the product's paths>` |
 | S7 | A number or date on two pages | the page that owns the topic (one topic, one page) |
 
-A finding is a concrete conflict between two sources, never a style remark: **where** (`docs/product-hub/<id>/<page>.md:<line>`), **conflict** (quote both sides with their source), **severity** (high: a wrong status, gate, scope, price or claim a reader would act on; medium: a stale fact or broken cross-reference; low: misleading wording), **fix** (the edit, and who decides).
+A finding is a concrete conflict between two sources, never a style remark: **where** (`docs/crafthall/canon/<id>/<page>.md:<line>`), **conflict** (quote both sides with their source), **severity** (high: a wrong status, gate, scope, price or claim a reader would act on; medium: a stale fact or broken cross-reference; low: misleading wording), **fix** (the edit, and who decides).
 
 ## 3. Output
 

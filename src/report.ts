@@ -7,7 +7,7 @@
  */
 import { checkHub, type CheckProblem } from './check.ts';
 import { parseDoc, splitSections } from './front-matter.ts';
-import { HUB_DIR, completeness, type Health } from './model.ts';
+import { completeness, type Health, resolveHubDir } from './model.ts';
 import { loadProductDocs, type Finding, type PlanInput, type Product } from './readers.ts';
 import { joinPath, type HubSource } from './source.ts';
 
@@ -71,7 +71,7 @@ const planOf = (id: string, file: string, text: string): PlanInput => {
 };
 
 /** Business plans: every hub's business-product/business-plan.md, then `<plansDir>/<id>/plan.md`. */
-export function loadPlans(source: HubSource, { hubDir = HUB_DIR, plansDir = null }: { hubDir?: string; plansDir?: string | null } = {}): PlanInput[] {
+export function loadPlans(source: HubSource, { hubDir = resolveHubDir((p) => source.isDir(p)).hubDir, plansDir = null }: { hubDir?: string; plansDir?: string | null } = {}): PlanInput[] {
   const plans: PlanInput[] = [];
   for (const id of source.list(hubDir).sort()) {
     const file = joinPath(hubDir, id, 'business-product/business-plan.md');
@@ -115,7 +115,7 @@ export function reportProduct(p: Product): HubReportProduct {
 }
 
 /** Runs the structure check and builds the hub model of every product (or only `only`) into one report. */
-export function hubReport(source: HubSource, { hubDir = HUB_DIR, only = null, plansDir = null, newCommand, today, template = null }: HubReportOptions = {}): HubReport {
+export function hubReport(source: HubSource, { hubDir = resolveHubDir((p) => source.isDir(p)).hubDir, only = null, plansDir = null, newCommand, today, template = null }: HubReportOptions = {}): HubReport {
   const { problems } = checkHub(source, { hubDir, only, newCommand, template });
   const { products, errors } = loadProductDocs(source, { hubDir, plans: loadPlans(source, { hubDir, plansDir }), today });
   const picked = products.filter((p) => !only || p.id === only).map(reportProduct);

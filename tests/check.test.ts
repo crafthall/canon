@@ -21,7 +21,7 @@ function structure(files: Record<string, string>): CheckProblem[] {
     for (let i = 1; i < parts.length; i++) dirs.add(parts.slice(0, i).join('/'));
   }
   const entries: HubEntry[] = [...[...dirs].map((path) => ({ path, dir: true })), ...Object.keys(files).map((path) => ({ path, dir: false }))];
-  const repo = new Set(Object.keys(files).map((p) => `docs/product-hub/demo/${p}`).concat(['docs/testing.md', 'docs/product-hub/README.md']));
+  const repo = new Set(Object.keys(files).map((p) => `docs/crafthall/canon/demo/${p}`).concat(['docs/testing.md', 'docs/crafthall/canon/README.md']));
   return checkProduct('demo', entries, { read: (p) => files[p], exists: (p) => repo.has(p) || [...repo].some((f) => f.startsWith(`${p}/`)) });
 }
 
@@ -57,7 +57,7 @@ describe('structure: layout, front matter, links', () => {
     expect(
       structure({
         'README.md': page('', '# Demo\n\n[overview](business-product/overview.md) · [rules](../README.md)\n'),
-        'business-product/overview.md': page('', '# Overview\n\n[testing](../../../testing.md)\n'),
+        'business-product/overview.md': page('', '# Overview\n\n[testing](../../../../testing.md)\n'),
         'business-product/business-model.json': '{}',
         'business-product/features/team-scan.md': page(),
         'business-product/releases/r1.md': page(),
@@ -70,7 +70,7 @@ describe('structure: layout, front matter, links', () => {
   it('layout: an unknown top-level file and an unknown folder fail; a file in an unknown folder is reported once', () => {
     const problems = structure({ 'README.md': page(), 'notes.md': page(), 'drafts/idea.md': page() });
     expect(rules(problems)).toEqual(['layout', 'layout']);
-    expect(problems[0]).toEqual({ rule: 'layout', file: 'docs/product-hub/demo/drafts/', message: 'docs/product-hub/demo/drafts/: folder not in the product hub layout' });
+    expect(problems[0]).toEqual({ rule: 'layout', file: 'docs/crafthall/canon/demo/drafts/', message: 'docs/crafthall/canon/demo/drafts/: folder not in the product hub layout' });
     expect(problems[1].message).toMatch(/notes\.md: file not in the product hub layout/);
   });
 
@@ -80,15 +80,15 @@ describe('structure: layout, front matter, links', () => {
     expect(problems[0].message).toMatch(/README\.md: no front matter/);
     expect(problems[1].message).toMatch(/overview\.md: front matter misses status, updated/);
     expect(messages(structure({ 'README.md': page().replace('product: demo', 'product: other') }))[0]).toMatch(/says product "other" in folder "demo"/);
-    expect(structure({ 'README.md': page().replace('updated: 2026-11-23', 'updated: soon') })).toEqual([{ rule: 'front-matter', file: 'docs/product-hub/demo/README.md', message: 'docs/product-hub/demo/README.md: "updated" must be a date YYYY-MM-DD' }]);
+    expect(structure({ 'README.md': page().replace('updated: 2026-11-23', 'updated: soon') })).toEqual([{ rule: 'front-matter', file: 'docs/crafthall/canon/demo/README.md', message: 'docs/crafthall/canon/demo/README.md: "updated" must be a date YYYY-MM-DD' }]);
   });
 
   it('link: a broken relative link fails; web links, anchors and code are not checked; a working link passes', () => {
     const body = '# X\n\n[gone](business-product/missing.md) [web](https://example.com) [here](#x)\n\n`[code](nope.md)`\n\n```\n[fenced](nope.md)\n```\n';
     const problems = structure({ 'README.md': page('', body) });
-    expect(problems).toEqual([{ rule: 'link', file: 'docs/product-hub/demo/README.md', message: 'docs/product-hub/demo/README.md: broken link "business-product/missing.md"' }]);
-    expect(structure({ 'README.md': page('', '[up](../../testing.md) [root](/docs/testing.md#x) [dir](business-product/)'), 'business-product/overview.md': page() })).toEqual([]);
-    expect(rules(structure({ 'README.md': page('', '[out](../../../../../x.md)') }))).toEqual(['link']);
+    expect(problems).toEqual([{ rule: 'link', file: 'docs/crafthall/canon/demo/README.md', message: 'docs/crafthall/canon/demo/README.md: broken link "business-product/missing.md"' }]);
+    expect(structure({ 'README.md': page('', '[up](../../../testing.md) [root](/docs/testing.md#x) [dir](business-product/)'), 'business-product/overview.md': page() })).toEqual([]);
+    expect(rules(structure({ 'README.md': page('', '[out](../../../../../../x.md)') }))).toEqual(['link']);
   });
 
   it('layout helpers', () => {
@@ -139,7 +139,7 @@ describe('consistency: lifecycle, catalog, ADR index, apps, topics', () => {
 
   it('status: a hub README status outside the enum', () => {
     const problems = consistency({ 'README.md': '---\nproduct: demo\npage: hub\nstatus: shipping\nupdated: 2026-11-23\n---\n\n# Demo\n' });
-    expect(problems).toEqual([{ rule: 'status', file: 'docs/product-hub/demo/README.md', message: 'docs/product-hub/demo/README.md: status "shipping" is not one of idea, validation, building, live, paused, retired' }]);
+    expect(problems).toEqual([{ rule: 'status', file: 'docs/crafthall/canon/demo/README.md', message: 'docs/crafthall/canon/demo/README.md: status "shipping" is not one of idea, validation, building, live, paused, retired' }]);
   });
 
   it('feature, catalog and adr-index: bad status, file without a row, row without a file, ADR not indexed', () => {
@@ -157,7 +157,7 @@ describe('consistency: lifecycle, catalog, ADR index, apps, topics', () => {
   });
 
   it('adr-index: a decision record without an index', () => {
-    expect(consistency({ 'architecture-engineering/decisions/README.md': null })).toEqual([{ rule: 'adr-index', file: 'docs/product-hub/demo/architecture-engineering/decisions/0001-first.md', message: 'docs/product-hub/demo/architecture-engineering/decisions/0001-first.md: decision record without architecture-engineering/decisions/README.md' }]);
+    expect(consistency({ 'architecture-engineering/decisions/README.md': null })).toEqual([{ rule: 'adr-index', file: 'docs/crafthall/canon/demo/architecture-engineering/decisions/0001-first.md', message: 'docs/crafthall/canon/demo/architecture-engineering/decisions/0001-first.md: decision record without architecture-engineering/decisions/README.md' }]);
   });
 
   it('package-json: a named app whose package.json is not JSON is a problem, not a crash (and not "does not exist")', () => {
@@ -175,8 +175,8 @@ describe('consistency: lifecycle, catalog, ADR index, apps, topics', () => {
   it('app: an app without the product tag, or a named app that does not exist', () => {
     const untagged = consistency({}, { tags: ['type:app'] });
     expect(untagged).toEqual([{ rule: 'app', file: 'apps/demo/package.json', message: expect.stringMatching(/apps\/demo\/package\.json: .* no "product:demo" Nx tag/) }]);
-    const missing = consistency({ 'README.md': '---\nproduct: demo\npage: hub\nstatus: building\napp: apps/demo\nupdated: 2026-11-23\n---\n\n# Demo\n\n[other](../../../apps/ghost/README.md)\n\n## Product metrics\n' });
-    expect(messages(missing)).toEqual(['docs/product-hub/demo/README.md: names apps/ghost, which does not exist']);
+    const missing = consistency({ 'README.md': '---\nproduct: demo\npage: hub\nstatus: building\napp: apps/demo\nupdated: 2026-11-23\n---\n\n# Demo\n\n[other](../../../../apps/ghost/README.md)\n\n## Product metrics\n' });
+    expect(messages(missing)).toEqual(['docs/crafthall/canon/demo/README.md: names apps/ghost, which does not exist']);
     expect(rules(missing)).toEqual(['app']);
   });
 
@@ -192,7 +192,7 @@ describe('consistency: lifecycle, catalog, ADR index, apps, topics', () => {
     expect(consistency(live)).toEqual([]);
     expect(consistency({ ...live, 'business-product/go-to-market.md': null, 'business-product/marketing.md': page() })).toEqual([]);
     const neither = consistency({ ...live, 'business-product/go-to-market.md': null });
-    expect(messages(neither)).toEqual(['docs/product-hub/demo: Go-to-market and marketing is required at Operate – add business-product/go-to-market.md or business-product/marketing.md']);
+    expect(messages(neither)).toEqual(['docs/crafthall/canon/demo: Go-to-market and marketing is required at Operate – add business-product/go-to-market.md or business-product/marketing.md']);
   });
 
   it('topic: the same main section in two pages is reported; Changelog, Sources and History are not', () => {
@@ -205,19 +205,19 @@ describe('consistency: lifecycle, catalog, ADR index, apps, topics', () => {
 
   it('topic: a repeated main section is reported once, with both pages, next to a shared Changelog', () => {
     const problems = consistency({ 'business-product/go-to-market.md': page('', '## Releases\nAgain.\n\n## Changelog\n- x\n'), 'business-product/monetization.md': page('', '## Changelog\n- y\n') });
-    expect(problems).toEqual([{ rule: 'topic', file: 'docs/product-hub/demo', message: 'docs/product-hub/demo: topic "releases" is a main section in business-product/go-to-market.md and business-product/roadmap.md – keep it in one page and link from the others' }]);
+    expect(problems).toEqual([{ rule: 'topic', file: 'docs/crafthall/canon/demo', message: 'docs/crafthall/canon/demo: topic "releases" is a main section in business-product/go-to-market.md and business-product/roadmap.md – keep it in one page and link from the others' }]);
   });
 });
 
 describe('checkHub through a HubSource', () => {
   const pkg = (tags: string[]) => JSON.stringify({ name: 'x', nx: { tags } });
-  const hubReadme = '---\nproduct: demo\npage: hub\nstatus: paused\nupdated: 2026-11-23\n---\n\n# Demo\n\n[app](../../../apps/has-hub/)\n';
+  const hubReadme = '---\nproduct: demo\npage: hub\nstatus: paused\nupdated: 2026-11-23\n---\n\n# Demo\n\n[app](../../../../apps/has-hub/)\n';
   const base = {
     'apps/has-hub/package.json': pkg(['type:app', 'product:demo', 'role:primary']),
     'libs/demo-lib/package.json': pkg(['type:util', 'product:demo']),
     'apps/plain/package.json': pkg(['type:app']),
-    'docs/product-hub/README.md': '# Hubs\n',
-    'docs/product-hub/demo/README.md': hubReadme,
+    'docs/crafthall/canon/README.md': '# Hubs\n',
+    'docs/crafthall/canon/demo/README.md': hubReadme,
   };
 
   it('a valid repo has no problem', () => {
@@ -225,7 +225,7 @@ describe('checkHub through a HubSource', () => {
   });
 
   it('tagged-without-hub, reserved-id and hub-folder; `only` scopes the check', () => {
-    const src = memorySource({ ...base, 'apps/orphan/package.json': pkg(['type:app', 'product:ghost', 'role:primary']), 'docs/product-hub/framework/README.md': hubReadme, 'docs/product-hub/notes.txt': 'x' });
+    const src = memorySource({ ...base, 'apps/orphan/package.json': pkg(['type:app', 'product:ghost', 'role:primary']), 'docs/crafthall/canon/framework/README.md': hubReadme, 'docs/crafthall/canon/notes.txt': 'x' });
     expect(taggedProjects(src)).toEqual([
       { dir: 'apps/has-hub', product: 'demo' },
       { dir: 'apps/orphan', product: 'ghost' },
@@ -233,20 +233,20 @@ describe('checkHub through a HubSource', () => {
     ]);
     const { problems } = checkHub(src, { newCommand: 'npm run product:new --' });
     expect(rules(problems)).toEqual(['reserved-id', 'hub-folder', 'tagged-without-hub']);
-    expect(problems[2].message).toBe('apps/orphan/package.json: tagged product:ghost, but docs/product-hub/ghost/README.md does not exist – create it with npm run product:new -- ghost');
+    expect(problems[2].message).toBe('apps/orphan/package.json: tagged product:ghost, but docs/crafthall/canon/ghost/README.md does not exist – create it with npm run product:new -- ghost');
     expect(checkHub(src).problems[2].message).toMatch(/create it with canon new ghost$/);
     expect(checkHub(src, { only: 'demo' }).problems.map((p) => p.rule)).toEqual(['hub-folder']);
   });
 
   it('reserved-id: the message names no host (no Spark, no Spark Hall)', () => {
-    const { problems } = checkHub(memorySource({ ...base, 'docs/product-hub/framework/README.md': hubReadme }));
-    expect(messages(problems)).toEqual(['docs/product-hub/framework/: "framework" is a reserved name (the hub viewer uses it for its own page, not a product) – rename the product folder']);
+    const { problems } = checkHub(memorySource({ ...base, 'docs/crafthall/canon/framework/README.md': hubReadme }));
+    expect(messages(problems)).toEqual(['docs/crafthall/canon/framework/: "framework" is a reserved name (the hub viewer uses it for its own page, not a product) – rename the product folder']);
     expect(problems[0].message).not.toMatch(/spark/i);
   });
 
   it('package-json: a project package.json that is not JSON is reported once, also when a hub README names it; tags of the others still count', () => {
-    const named = hubReadme.replace('[app](../../../apps/has-hub/)', '[app](../../../apps/has-hub/) [web](../../../apps/broken/)');
-    const src = memorySource({ ...base, 'docs/product-hub/demo/README.md': named, 'apps/broken/package.json': '{ "nx": { "tags": ["product:demo"] }, }', 'libs/bad/package.json': 'not json', 'apps/orphan/package.json': pkg(['product:ghost']) });
+    const named = hubReadme.replace('[app](../../../../apps/has-hub/)', '[app](../../../../apps/has-hub/) [web](../../../../apps/broken/)');
+    const src = memorySource({ ...base, 'docs/crafthall/canon/demo/README.md': named, 'apps/broken/package.json': '{ "nx": { "tags": ["product:demo"] }, }', 'libs/bad/package.json': 'not json', 'apps/orphan/package.json': pkg(['product:ghost']) });
     expect(taggedProjects(src)).toEqual([
       { dir: 'apps/has-hub', product: 'demo' },
       { dir: 'apps/orphan', product: 'ghost' },
@@ -265,22 +265,22 @@ describe('checkHub through a HubSource', () => {
   });
 
   it('a "_" folder (template) gets the structure rules only and is not counted', () => {
-    const src = memorySource({ ...base, 'docs/product-hub/_template/README.md': '---\nproduct: <id>\npage: hub\nstatus: idea\nupdated: YYYY-MM-DD\n---\n' });
+    const src = memorySource({ ...base, 'docs/crafthall/canon/_template/README.md': '---\nproduct: <id>\npage: hub\nstatus: idea\nupdated: YYYY-MM-DD\n---\n' });
     expect(checkHub(src)).toEqual({ products: 1, problems: [] });
   });
 
   it('a link in _template/ to a page only the bundled template has: broken without `template`, fine with it', () => {
     const readme = '---\nproduct: <id>\npage: hub\nstatus: idea\nupdated: YYYY-MM-DD\n---\n\n[o](business-product/overview.md) [g](business-product/gone.md)\n';
-    const src = memorySource({ ...base, 'docs/product-hub/_template/README.md': readme });
+    const src = memorySource({ ...base, 'docs/crafthall/canon/_template/README.md': readme });
     const template = memorySource({ 'README.md': 'x', 'business-product/overview.md': 'x' });
     const links = (o: Parameters<typeof checkHub>[1]) => checkHub(src, o).problems.map((p) => p.message);
     expect(links({})).toEqual([
-      'docs/product-hub/_template/README.md: broken link "business-product/overview.md"',
-      'docs/product-hub/_template/README.md: broken link "business-product/gone.md"',
+      'docs/crafthall/canon/_template/README.md: broken link "business-product/overview.md"',
+      'docs/crafthall/canon/_template/README.md: broken link "business-product/gone.md"',
     ]);
-    expect(links({ template })).toEqual(['docs/product-hub/_template/README.md: broken link "business-product/gone.md"']);
+    expect(links({ template })).toEqual(['docs/crafthall/canon/_template/README.md: broken link "business-product/gone.md"']);
     // Only the template folder falls back: a product's own link to the same page is still broken.
-    const product = memorySource({ ...base, 'docs/product-hub/demo/README.md': (base['docs/product-hub/demo/README.md'] as string) + '\n[o](business-product/brand.md)\n' });
+    const product = memorySource({ ...base, 'docs/crafthall/canon/demo/README.md': (base['docs/crafthall/canon/demo/README.md'] as string) + '\n[o](business-product/brand.md)\n' });
     expect(checkHub(product, { template: memorySource({ 'business-product/brand.md': 'x' }) }).problems.map((p) => p.rule)).toContain('link');
   });
 
@@ -294,20 +294,20 @@ describe('link rule on disk: the ".." guard', () => {
   const outer = realpathSync(mkdtempSync(join(tmpdir(), 'hub-escape-')));
   afterAll(() => rmSync(outer, { recursive: true, force: true }));
   const root = join(outer, 'repo');
-  const hub = join(root, 'docs/product-hub/demo');
+  const hub = join(root, 'docs/crafthall/canon/demo');
   mkdirSync(hub, { recursive: true });
   writeFileSync(join(outer, 'outside.md'), '# Outside the repo\n');
   writeFileSync(join(root, 'inside.md'), '# Inside the repo\n');
   const readme = (link: string) => `---\nproduct: demo\npage: hub\nstatus: paused\nupdated: 2026-11-23\n---\n\n# Demo\n\n[x](${link})\n`;
 
   it('a link that leaves the repository root is broken, even when the target exists on disk', () => {
-    writeFileSync(join(hub, 'README.md'), readme('../../../../outside.md'));
+    writeFileSync(join(hub, 'README.md'), readme('../../../../../outside.md'));
     const { problems } = checkHub(nodeSource(root));
-    expect(problems).toEqual([{ rule: 'link', file: 'docs/product-hub/demo/README.md', message: 'docs/product-hub/demo/README.md: broken link "../../../../outside.md"' }]);
+    expect(problems).toEqual([{ rule: 'link', file: 'docs/crafthall/canon/demo/README.md', message: 'docs/crafthall/canon/demo/README.md: broken link "../../../../../outside.md"' }]);
   });
 
   it('the same depth inside the root passes (the guard is not a blanket refusal of ".." links)', () => {
-    writeFileSync(join(hub, 'README.md'), readme('../../../inside.md'));
+    writeFileSync(join(hub, 'README.md'), readme('../../../../inside.md'));
     expect(checkHub(nodeSource(root)).problems).toEqual([]);
   });
 });
@@ -322,7 +322,7 @@ describe('optional page: competition landscape', () => {
     expect(consistency({ [HUB_PATHS.competitionLandscape]: page('', '# Competition landscape\n\nRivals.\n').replace('page: overview', 'page: competition-landscape') })).toEqual([]);
     for (const wrong of ['competition-landscapes.md', 'competitor-landscape.md', 'Competition-landscape.md', 'competition_landscape.md', 'competition-landscape.markdown']) {
       const problems = structure({ 'README.md': page(), [`business-product/${wrong}`]: page() });
-      expect(problems, wrong).toEqual([{ rule: 'layout', file: `docs/product-hub/demo/business-product/${wrong}`, message: `docs/product-hub/demo/business-product/${wrong}: file not in the product hub layout` }]);
+      expect(problems, wrong).toEqual([{ rule: 'layout', file: `docs/crafthall/canon/demo/business-product/${wrong}`, message: `docs/crafthall/canon/demo/business-product/${wrong}: file not in the product hub layout` }]);
     }
     // Only directly under business-product/.
     expect(allowedFile('competition-landscape.md')).toBe(false);
@@ -330,7 +330,7 @@ describe('optional page: competition landscape', () => {
   });
 
   it('the reader never takes the appendix for the competitive index', () => {
-    const D = 'docs/product-hub/demo';
+    const D = 'docs/crafthall/canon/demo';
     const readme = '---\nproduct: demo\npage: hub\nstatus: building\nupdated: 2026-11-23\n---\n\n# Demo\n';
     const source = memorySource({ [`${D}/README.md`]: readme, [`${D}/${HUB_PATHS.competitionLandscape}`]: page('', '# Landscape\n\nRivals.\n') });
     const src = readHubProduct(source, D);

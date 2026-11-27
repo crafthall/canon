@@ -130,7 +130,7 @@ describe('shared fixture hubs: what each fixture shows', () => {
 });
 
 describe('property: breaking edits of the complete fixture', () => {
-  const dir = 'docs/product-hub/acme-ledger';
+  const dir = 'docs/crafthall/canon/acme-ledger';
   const clean = readHubProduct(nodeSource(byName.complete.root), dir);
   const plans = [{ id: 'acme-ledger', file: `${dir}/business-product/business-plan.md` }];
   const build = (src: HubProductSource) => buildProduct('acme-ledger', src, { plans, today: FIXTURE_TODAY });

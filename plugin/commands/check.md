@@ -13,7 +13,7 @@ allowed-tools: Bash(node:*), Read, Grep, Glob
 Arguments the user typed: $ARGUMENTS
 
 The output above comes from the `hub` command line bundled in this plugin (`scripts/hub.mjs`, the Crafthall Product
-Hub core): it read the product hubs under `docs/product-hub/` (or `--hub-dir`) of this repository on this machine;
+Hub core): it read the product hubs under `docs/crafthall/canon/` (or `--hub-dir`) of this repository on this machine;
 nothing was sent and no account is used. No product id means `--all`. This command is `/crafthall-canon:check`;
 use that name when you tell the user to run it again.
 
