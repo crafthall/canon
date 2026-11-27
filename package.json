@@ -1,6 +1,6 @@
 {
   "name": "@crafthall/canon",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "license": "MIT",
   "type": "module",
   "description": "Crafthall Canon: one documentation folder per product – the page layout in three sections, the eight lifecycle stages, the documentation matrix (which page each stage needs), the health checks, the completeness count, the readers that build a product from a hub folder through one file source, the structure check, the scaffold and the versioned --json report. The core has no dependencies; the disk source and the writer are the ./node entry, the `canon` CLI (canon new, canon init, canon check) the ./cli entry and bin; the shared fixture hubs are ./testing; the standalone Claude Code plugin is in plugin/.",
