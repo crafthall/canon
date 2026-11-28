@@ -1,7 +1,7 @@
 {
   "name": "crafthall-canon",
   "displayName": "Crafthall Canon",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "One documentation folder per product (docs/crafthall/canon/<id>/): start it, draft it from the repository, keep it current in every change, and check it with /crafthall-canon:check – what is missing, stale or inconsistent. Runs on this machine: no network, no account, works without Crafthall HQ.",
   "author": {
     "name": "Crafthall"
