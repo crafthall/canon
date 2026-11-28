@@ -890,7 +890,7 @@ function checkConsistency(id, files, { read, appTags, base = `${HUB_DIR}/${id}` 
       else if (!tags.includes(`product:${id}`)) add("app", `${app}/package.json`, `${app}/package.json: named in ${base}/README.md but has no "product:${id}" Nx tag (add it to "nx": { "tags" } \u2013 Canon docs, layout.md "App tags")`);
     }
   }
-  const pages = [...files].filter((p) => p.endsWith(".md") && !/^business-product\/features\/|^architecture-engineering\/decisions\//.test(p));
+  const pages = [...files].filter((p) => p.endsWith(".md") && !/^business-product\/features\/|^architecture-engineering\/decisions\/|^business-product\/business-plan\.md$/.test(p));
   const seen = /* @__PURE__ */ new Map();
   for (const p of pages) {
     let fence = false;
