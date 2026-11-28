@@ -78,6 +78,19 @@ export function relativePath(from: string, to: string): string {
 
 const dirname = (p: string) => (p.includes('/') ? p.slice(0, p.lastIndexOf('/')) : '.');
 
+/** The business plan's appendix that `--plan` moves along (docs/layout.md: competition-landscape.md). */
+export const PLAN_APPENDIX = 'competition-landscape.md';
+
+/** Front matter with the hub's page keys: product and page set, status and updated added when missing. */
+function withPageKeys(text: string, product: string, page: string, today: string): string {
+  const m = String(text).match(/^---\n([\s\S]*?)\n---\n/);
+  const kept = m ? m[1].split('\n').filter((l) => !/^(product|page):/.test(l)) : [];
+  const keys = [`product: ${product}`, `page: ${page}`, ...kept];
+  if (!keys.some((l) => /^status:/.test(l))) keys.push('status: current');
+  if (!keys.some((l) => /^updated:/.test(l))) keys.push(`updated: ${today}`);
+  return `---\n${keys.join('\n')}\n---\n${m ? String(text).slice(m[0].length) : `\n${text}`}`;
+}
+
 /** Rewrites the relative Markdown links of `text` from `fromFile` to `toFile` (repo-relative paths; code is skipped). */
 export function rebaseLinks(text: string, fromFile: string, toFile: string): string {
   let fence = false;
@@ -216,19 +229,20 @@ export function planNew(source: HubSource, opts: NewOptions, { today = new Date(
   if (!pages.includes('business-product/overview.md')) pages.unshift('business-product/overview.md');
 
   // Business plan: required from the Business plan stage on; it is never templated (it needs real numbers).
-  let plan: { id: string; dir: string; text: string } | null = null;
+  let plan: { id: string; dir: string; text: string; appendix: string | null } | null = null;
   if (required.includes('business-plan') && !opts.plan) errors.push(`${stageLabel} requires a business plan – pass --plan <id> with a plan from ${plansDir}/ (write one first: ${plansDir}/README.md), or start at an earlier --stage`);
   if (opts.plan) {
     const pdir = `${plansDir}/${opts.plan}`;
     if (!ID_RE.test(opts.plan) || source.read(`${pdir}/plan.md`) == null || source.read(`${pdir}/model.json`) == null) errors.push(`--plan ${opts.plan}: ${pdir}/plan.md and model.json must both exist`);
     else {
-      const extra = source.list(pdir).filter((f) => !['plan.md', 'model.json', '.DS_Store'].includes(f));
+      // The plan's appendix (competition landscape) moves with it into business-product/; anything else has no place.
+      const extra = source.list(pdir).filter((f) => !['plan.md', 'model.json', PLAN_APPENDIX, '.DS_Store'].includes(f));
       const text = source.read(`${pdir}/plan.md`) as string;
       const meta = frontKeys(text) || {};
       if (extra.length) errors.push(`--plan ${opts.plan}: ${pdir}/ also holds ${extra.join(', ')} – the hub layout has no place for it; move or delete it first`);
       else if (meta.id !== opts.plan) errors.push(`--plan ${opts.plan}: ${pdir}/plan.md front matter says id "${meta.id || 'none'}" – fix it first`);
       else if (meta.product && meta.product !== id) errors.push(`--plan ${opts.plan}: the plan already belongs to product "${meta.product}"`);
-      else plan = { id: opts.plan, dir: pdir, text };
+      else plan = { id: opts.plan, dir: pdir, text, appendix: source.read(`${pdir}/${PLAN_APPENDIX}`) };
     }
   }
 
@@ -268,7 +282,9 @@ export function planNew(source: HubSource, opts: NewOptions, { today = new Date(
   const primary = apps.find((a) => a.role === 'primary') || null;
   const front = ['---', `product: ${id}`, 'page: hub', `name: ${name}`, `status: ${status}`, ...(opts.team ? [`team: ${opts.team}`] : []), ...(plan && plan.id !== id ? [`plan: ${plan.id}`] : []), `app: ${primary ? primary.dir : 'none yet'}`, `updated: ${today}`, '---', ''].join('\n');
   const body = fillPage(tpl('README.md'), ctx).replace(/^---\n[\s\S]*?\n---\n/, '');
-  const appCell = (a: { dir: string; role: string }) => `[\`${a.dir}/\`](../../../${a.dir}/) (\`role:${a.role}\`)`;
+  // The README sits in <hubDir>/<id>/: one "../" per segment of that folder reaches the repository root.
+  const toRoot = '../'.repeat(dir.split('/').filter(Boolean).length);
+  const appCell = (a: { dir: string; role: string }) => `[\`${a.dir}/\`](${toRoot}${a.dir}/) (\`role:${a.role}\`)`;
   const statusRows = [
     `| Stage | **${stageLabel}** (\`status: ${status}\`) |`,
     `| Team | ${opts.team ? titleCase(opts.team) : 'none yet'} |`,
@@ -306,11 +322,22 @@ export function planNew(source: HubSource, opts: NewOptions, { today = new Date(
       kept.splice(at + 1, 0, `product: ${id}`, 'page: business-plan');
       return `---\n${kept.join('\n')}\n---\n`;
     });
-    actions.push({ kind: 'edit', path: to, text: rebaseLinks(withKeys, from, to), note: 'add product + page to the plan front matter, rebase its relative links' });
+    const appendixFrom = `${plan.dir}/${PLAN_APPENDIX}`;
+    const appendixTo = `${dir}/business-product/${PLAN_APPENDIX}`;
+    // Plan and appendix move into the same folder, so a link between them points to the new name, not back to the old folder.
+    const relink = (text: string, fromFile: string, toFile: string, other: string, otherTo: string) =>
+      rebaseLinks(text, fromFile, toFile).replace(/\]\(([^)\s#]+)(#[^)\s]*)?\)/g, (all, t: string, anchor = '') =>
+        normalizePath(`${dirname(toFile)}/${t}`) === normalizePath(other) ? `](${relativePath(dirname(toFile), otherTo)}${anchor})` : all);
+    const planText = plan.appendix != null ? relink(withKeys, from, to, appendixFrom, appendixTo) : rebaseLinks(withKeys, from, to);
+    actions.push({ kind: 'edit', path: to, text: planText, note: 'add product + page to the plan front matter, rebase its relative links' });
+    if (plan.appendix != null) {
+      actions.push({ kind: 'mv', from: appendixFrom, to: appendixTo });
+      actions.push({ kind: 'edit', path: appendixTo, text: relink(withPageKeys(plan.appendix, id, 'competition-landscape', today), appendixFrom, appendixTo, from, to), note: 'add the page front matter to the appendix, rebase its relative links' });
+    }
     actions.push({ kind: 'rmdir', path: plan.dir });
     const src = movedPathsFile ? source.read(movedPathsFile) : null;
     if (movedPathsFile && src != null) {
-      const rows = `  ['${from}', '${to}'],\n  ['${plan.dir}/model.json', '${modelTo}'],\n`;
+      const rows = `  ['${from}', '${to}'],\n  ['${plan.dir}/model.json', '${modelTo}'],\n${plan.appendix != null ? `  ['${appendixFrom}', '${appendixTo}'],\n` : ''}`;
       const at = src.indexOf('\n];\n');
       if (at > 0) actions.push({ kind: 'edit', path: movedPathsFile, text: `${src.slice(0, at + 1)}${rows}${src.slice(at + 1)}`, note: 'map the old plan paths for append-only links' });
     }

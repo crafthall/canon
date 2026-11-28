@@ -1115,6 +1115,19 @@ function relativePath(from, to) {
   return [...a.slice(i).map(() => ".."), ...b.slice(i)].join("/");
 }
 var dirname = (p) => p.includes("/") ? p.slice(0, p.lastIndexOf("/")) : ".";
+var PLAN_APPENDIX = "competition-landscape.md";
+function withPageKeys(text, product, page, today) {
+  const m = String(text).match(/^---\n([\s\S]*?)\n---\n/);
+  const kept = m ? m[1].split("\n").filter((l) => !/^(product|page):/.test(l)) : [];
+  const keys = [`product: ${product}`, `page: ${page}`, ...kept];
+  if (!keys.some((l) => /^status:/.test(l))) keys.push("status: current");
+  if (!keys.some((l) => /^updated:/.test(l))) keys.push(`updated: ${today}`);
+  return `---
+${keys.join("\n")}
+---
+${m ? String(text).slice(m[0].length) : `
+${text}`}`;
+}
 function rebaseLinks(text, fromFile, toFile) {
   let fence = false;
   return String(text).split("\n").map((line) => {
@@ -1190,13 +1203,13 @@ function planNew(source, opts, { today = (/* @__PURE__ */ new Date()).toISOStrin
     const pdir = `${plansDir}/${opts.plan}`;
     if (!ID_RE.test(opts.plan) || source.read(`${pdir}/plan.md`) == null || source.read(`${pdir}/model.json`) == null) errors.push(`--plan ${opts.plan}: ${pdir}/plan.md and model.json must both exist`);
     else {
-      const extra = source.list(pdir).filter((f) => !["plan.md", "model.json", ".DS_Store"].includes(f));
+      const extra = source.list(pdir).filter((f) => !["plan.md", "model.json", PLAN_APPENDIX, ".DS_Store"].includes(f));
       const text = source.read(`${pdir}/plan.md`);
       const meta = frontKeys(text) || {};
       if (extra.length) errors.push(`--plan ${opts.plan}: ${pdir}/ also holds ${extra.join(", ")} \u2013 the hub layout has no place for it; move or delete it first`);
       else if (meta.id !== opts.plan) errors.push(`--plan ${opts.plan}: ${pdir}/plan.md front matter says id "${meta.id || "none"}" \u2013 fix it first`);
       else if (meta.product && meta.product !== id) errors.push(`--plan ${opts.plan}: the plan already belongs to product "${meta.product}"`);
-      else plan = { id: opts.plan, dir: pdir, text };
+      else plan = { id: opts.plan, dir: pdir, text, appendix: source.read(`${pdir}/${PLAN_APPENDIX}`) };
     }
   }
   const projects2 = appProjects(source);
@@ -1231,7 +1244,8 @@ function planNew(source, opts, { today = (/* @__PURE__ */ new Date()).toISOStrin
   const primary = apps.find((a) => a.role === "primary") || null;
   const front = ["---", `product: ${id}`, "page: hub", `name: ${name}`, `status: ${status}`, ...opts.team ? [`team: ${opts.team}`] : [], ...plan && plan.id !== id ? [`plan: ${plan.id}`] : [], `app: ${primary ? primary.dir : "none yet"}`, `updated: ${today}`, "---", ""].join("\n");
   const body = fillPage(tpl("README.md"), ctx).replace(/^---\n[\s\S]*?\n---\n/, "");
-  const appCell = (a) => `[\`${a.dir}/\`](../../../${a.dir}/) (\`role:${a.role}\`)`;
+  const toRoot = "../".repeat(dir.split("/").filter(Boolean).length);
+  const appCell = (a) => `[\`${a.dir}/\`](${toRoot}${a.dir}/) (\`role:${a.role}\`)`;
   const statusRows = [
     `| Stage | **${stageLabel}** (\`status: ${status}\`) |`,
     `| Team | ${opts.team ? titleCase(opts.team) : "none yet"} |`,
@@ -1271,13 +1285,22 @@ ${kept.join("\n")}
 ---
 `;
     });
-    actions.push({ kind: "edit", path: to, text: rebaseLinks(withKeys, from, to), note: "add product + page to the plan front matter, rebase its relative links" });
+    const appendixFrom = `${plan.dir}/${PLAN_APPENDIX}`;
+    const appendixTo = `${dir}/business-product/${PLAN_APPENDIX}`;
+    const relink = (text, fromFile, toFile, other, otherTo) => rebaseLinks(text, fromFile, toFile).replace(/\]\(([^)\s#]+)(#[^)\s]*)?\)/g, (all, t, anchor = "") => normalizePath(`${dirname(toFile)}/${t}`) === normalizePath(other) ? `](${relativePath(dirname(toFile), otherTo)}${anchor})` : all);
+    const planText = plan.appendix != null ? relink(withKeys, from, to, appendixFrom, appendixTo) : rebaseLinks(withKeys, from, to);
+    actions.push({ kind: "edit", path: to, text: planText, note: "add product + page to the plan front matter, rebase its relative links" });
+    if (plan.appendix != null) {
+      actions.push({ kind: "mv", from: appendixFrom, to: appendixTo });
+      actions.push({ kind: "edit", path: appendixTo, text: relink(withPageKeys(plan.appendix, id, "competition-landscape", today), appendixFrom, appendixTo, from, to), note: "add the page front matter to the appendix, rebase its relative links" });
+    }
     actions.push({ kind: "rmdir", path: plan.dir });
     const src = movedPathsFile ? source.read(movedPathsFile) : null;
     if (movedPathsFile && src != null) {
       const rows = `  ['${from}', '${to}'],
   ['${plan.dir}/model.json', '${modelTo}'],
-`;
+${plan.appendix != null ? `  ['${appendixFrom}', '${appendixTo}'],
+` : ""}`;
       const at = src.indexOf("\n];\n");
       if (at > 0) actions.push({ kind: "edit", path: movedPathsFile, text: `${src.slice(0, at + 1)}${rows}${src.slice(at + 1)}`, note: "map the old plan paths for append-only links" });
     }

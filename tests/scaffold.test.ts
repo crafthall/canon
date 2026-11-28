@@ -102,6 +102,67 @@ describe('planNew on an in-memory repo', () => {
     expect(checkHub(memorySource(repo)).problems).toEqual([]);
   });
 
+  /** Applies a plan's actions to an in-memory file map (write, edit, mv, rmdir), as the node writer does on disk. */
+  const apply = (files: Record<string, string>, actions: { kind: string; path?: string; from?: string; to?: string; text?: string }[]) => {
+    const out = { ...files };
+    for (const a of actions) {
+      if (a.kind === 'write' || a.kind === 'edit') out[a.path as string] = a.text as string;
+      else if (a.kind === 'mv') {
+        out[a.to as string] = out[a.from as string];
+        delete out[a.from as string];
+      }
+    }
+    return out;
+  };
+  const app = { 'apps/web/package.json': JSON.stringify({ name: 'web', nx: { tags: ['type:app'] } }, null, 2) + '\n' };
+
+  it('property: the README link to the primary app reaches it from any hub folder depth', () => {
+    fc.assert(
+      fc.property(fc.array(fc.constantFrom('docs', 'crafthall', 'canon', 'hub', 'x'), { minLength: 1, maxLength: 4 }), (segs) => {
+        const hubDir = segs.join('/');
+        const plan = planNew(memorySource({ ...app }), opts(['demo', '--app', 'web']), { today: '2026-11-27', template, hubDir });
+        expect(plan.errors).toEqual([]);
+        const readme = (plan.actions.find((a) => a.kind === 'write' && a.path === `${hubDir}/demo/README.md`) as { text: string }).text;
+        const target = (readme.match(/\]\(([^)]*apps\/web\/)\)/) as RegExpMatchArray)[1];
+        expect(normalizePath(`${hubDir}/demo/${target}`)).toBe('apps/web/');
+      }),
+      { numRuns: 200 },
+    );
+  });
+
+  it('with --app, the created hub passes the check in the default and in the legacy folder', () => {
+    for (const legacy of [false, true]) {
+      const base: Record<string, string> = { ...app, ...(legacy ? { 'docs/product-hub/README.md': '# Rules\n' } : {}) };
+      const plan = planNew(memorySource(base), opts(['demo', '--app', 'web']), { today: '2026-11-27', template });
+      expect(plan.errors).toEqual([]);
+      const repo = apply(base, plan.actions as never);
+      expect(Object.keys(repo).some((p) => p.startsWith(legacy ? 'docs/product-hub/demo/' : 'docs/crafthall/canon/demo/')), String(legacy)).toBe(true);
+      expect(checkHub(memorySource(repo)).problems.map((p) => p.message), String(legacy)).toEqual([]);
+    }
+  });
+
+  it('--plan moves the competition landscape appendix with the plan, gives it page keys and keeps the links between them', () => {
+    const base = {
+      'docs/business-plans/p/plan.md': '---\nid: p\nstatus: final\n---\n# P\n\nFull list: [landscape](competition-landscape.md#groups). Model: [m](model.json).\n',
+      'docs/business-plans/p/model.json': '{}',
+      'docs/business-plans/p/competition-landscape.md': '# P – competition landscape\n\nCounts in [the plan](plan.md) §3.\n',
+      'map.mjs': 'export const M = [\n];\n',
+    };
+    const plan = planNew(memorySource(base), opts(['demo', '--stage', 'building', '--plan', 'p']), { today: '2026-11-27', template, movedPathsFile: 'map.mjs' });
+    expect(plan.errors).toEqual([]);
+    const repo = apply(base, plan.actions as never);
+    const land = repo['docs/crafthall/canon/demo/business-product/competition-landscape.md'];
+    expect(land).toMatch(/^---\nproduct: demo\npage: competition-landscape\nstatus: current\nupdated: 2026-11-27\n---\n\n# P – competition landscape/);
+    expect(land).toContain('[the plan](business-plan.md)');
+    expect(repo['docs/crafthall/canon/demo/business-product/business-plan.md']).toContain('[landscape](competition-landscape.md#groups)');
+    expect(Object.keys(repo).filter((p) => p.startsWith('docs/business-plans/'))).toEqual([]);
+    expect(repo['map.mjs']).toContain("['docs/business-plans/p/competition-landscape.md', 'docs/crafthall/canon/demo/business-product/competition-landscape.md'],");
+    expect(checkHub(memorySource(repo)).problems.filter((p) => p.file.includes('competition-landscape') || p.rule === 'layout')).toEqual([]);
+    // Any other file next to the plan still has no place in the hub.
+    const other = planNew(memorySource({ ...base, 'docs/business-plans/p/notes.md': 'x' }), opts(['demo', '--stage', 'building', '--plan', 'p']), { template });
+    expect(other.errors).toEqual(['--plan p: docs/business-plans/p/ also holds notes.md – the hub layout has no place for it; move or delete it first']);
+  });
+
   it('host options: an allowed team list, a moved-paths map only when named', () => {
     const repo = memorySource({ 'docs/crafthall/canon/README.md': '# Rules\n' });
     expect(planNew(repo, opts(['demo', '--team', 'nova']), { template, teams: ['phoenix', 'aurora'] }).errors).toEqual(['--team must be one of phoenix, aurora']);
