@@ -203,6 +203,13 @@ describe('consistency: lifecycle, catalog, ADR index, apps, topics', () => {
     expect(rules(shared('Pricing'))).toEqual(['topic']);
   });
 
+  it('topic: the business plan may share a main section with a topic page (it is a standalone document)', () => {
+    const plan = { 'business-product/business-plan.md': page('', '## 2. Offer\n- plan\n'), 'business-product/monetization.md': page('', '## Offer\n- page\n') };
+    expect(consistency(plan)).toEqual([]);
+    // Two topic pages with that section are still one topic in two files.
+    expect(rules(consistency({ ...plan, 'business-product/go-to-market.md': page('', '## Offer\n- again\n') }))).toEqual(['topic']);
+  });
+
   it('topic: a repeated main section is reported once, with both pages, next to a shared Changelog', () => {
     const problems = consistency({ 'business-product/go-to-market.md': page('', '## Releases\nAgain.\n\n## Changelog\n- x\n'), 'business-product/monetization.md': page('', '## Changelog\n- y\n') });
     expect(problems).toEqual([{ rule: 'topic', file: 'docs/crafthall/canon/demo', message: 'docs/crafthall/canon/demo: topic "releases" is a main section in business-product/go-to-market.md and business-product/roadmap.md – keep it in one page and link from the others' }]);

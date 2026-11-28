@@ -61,7 +61,7 @@ docs/crafthall/canon/<id>/
 ## Page rules
 
 - **Front matter on every Markdown page:** `product`, `page`, `status`, `updated` (YYYY-MM-DD). `status` is the page's own: `current | draft | historical`; the hub README uses the product status (`idea | validation | building | live | paused | retired`), feature pages the feature status (`specified | building | built | partial | later | removed`), decision records the decision status (`proposed | accepted | superseded | rejected`).
-- **Fixed names**, lowercase kebab-case, one topic per file. A topic lives in one file; others link to it.
+- **Fixed names**, lowercase kebab-case, one topic per file. A topic lives in one file; others link to it. The business plan is the exception: it is a standalone document that covers offer, money and channel in one place, so the topic check does not compare it with the topic pages (they link its numbers).
 - **Optional pages** (`competitive-index.md`, `competition-landscape.md`, `experiments.md`) are allowed at every stage and never required by their name alone. `competitive-index.md` is the scored comparison the hub view shows next to the value proposition; `competition-landscape.md` is an appendix of the business plan (who competes and where the product stands; `canon new --plan` moves it from the plan folder along with the plan) – the check accepts it, the hub view does not render it as a card, and it is never read as the competitive index.
 - **Pages appear when the stage requires them** ([lifecycle](lifecycle.md)) – no empty placeholders. The hub README lists the missing ones as "not due yet".
 - **A feature** is something a user can do or see, or a capability other features depend on. Group tiny items; no page per button.

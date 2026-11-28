@@ -10,7 +10,8 @@
  *      (`catalog`),
  *   6. a decision record missing from decisions/README.md (`adr-index`),
  *   7. an app named in the hub README that does not exist or lacks the Nx tag product:<id> (`app`),
- *   8. the same "## " topic heading as a main section of two pages, Changelog, Sources and History excepted (`topic`),
+ *   8. the same "## " topic heading as a main section of two pages, Changelog, Sources and History excepted; feature
+ *      pages, decision records and the business plan are not compared (`topic`),
  *   9. a project in apps/ or libs/ tagged product:<id> without <hubDir>/<id>/README.md (`tagged-without-hub`), a
  *      product folder with a reserved name (`reserved-id`) and a stray file in <hubDir>/ (`hub-folder`),
  *  10. a project package.json in apps/ or libs/ that is not valid JSON, so its Nx tags cannot be read (`package-json`,
@@ -273,8 +274,10 @@ export function checkConsistency(id: string, files: ReadonlySet<string>, { read,
       else if (!tags.includes(`product:${id}`)) add('app', `${app}/package.json`, `${app}/package.json: named in ${base}/README.md but has no "product:${id}" Nx tag (add it to "nx": { "tags" } – Canon docs, layout.md "App tags")`);
     }
   }
-  // 5. One topic in one file: the same "## " heading as a main section of two pages.
-  const pages = [...files].filter((p) => p.endsWith('.md') && !/^business-product\/features\/|^architecture-engineering\/decisions\//.test(p));
+  // 5. One topic in one file: the same "## " heading as a main section of two pages. Feature pages, decision records and
+  // the business plan are left out: the plan is a standalone document moved in whole (offer, money, channel …), and the
+  // topic pages link its numbers instead of copying them.
+  const pages = [...files].filter((p) => p.endsWith('.md') && !/^business-product\/features\/|^architecture-engineering\/decisions\/|^business-product\/business-plan\.md$/.test(p));
   const seen = new Map<string, Set<string>>();
   for (const p of pages) {
     // A section that only points to the page holding the topic ("Moved … to [page](…)") is not a second copy.
