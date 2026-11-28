@@ -4,7 +4,7 @@
 //      agent rules are written, Crafthall HQ is not installed (an empty Claude config folder and a PATH without
 //      crafthall-hq) so the step is skipped with a message, and `canon check --all` is green with only draft findings.
 //   2. HQ available as an installed Claude Code plugin (a stand-in script in a fake plugin folder): it is found, run
-//      offline – its environment carries no CRAFTHALL_HQ_* / ATHENA_* setting and a fresh, empty config folder – and its
+//      offline – its environment carries no CRAFTHALL_HQ_* setting and a fresh, empty config folder – and its
 //      verdict is recorded in the hub README. The real Crafthall HQ bundle is run in a host's own wrapper
 //      test: this package imports nothing outside itself.
 //   3. An existing hub: exit 1, every file byte for byte unchanged, HQ never started.
@@ -37,7 +37,7 @@ function barePath(): string {
 /** A user environment: no HQ settings from the developer's shell, the given Claude config folder. */
 const userEnv = (claudeDir: string, extra: NodeJS.ProcessEnv = {}): NodeJS.ProcessEnv => {
   const env: NodeJS.ProcessEnv = {};
-  for (const [k, v] of Object.entries(process.env)) if (!k.startsWith('CRAFTHALL_HQ_') && !k.startsWith('ATHENA_')) env[k] = v;
+  for (const [k, v] of Object.entries(process.env)) if (!k.startsWith('CRAFTHALL_HQ_')) env[k] = v;
   return { ...env, PATH: barePath(), CLAUDE_CONFIG_DIR: claudeDir, GIT_AUTHOR_NAME: 't', GIT_AUTHOR_EMAIL: 't@example.invalid', GIT_COMMITTER_NAME: 't', GIT_COMMITTER_EMAIL: 't@example.invalid', ...extra };
 };
 
@@ -67,14 +67,14 @@ function snapshot(dir: string, rel = ''): Record<string, string> {
 function fakeHqPlugin(claudeDir: string, seen: string) {
   const plugin = join(claudeDir, 'plugins/cache/crafthall-local/crafthall-hq/0.1.0');
   mkdirSync(join(plugin, 'scripts'), { recursive: true });
-  writeFileSync(join(plugin, '.mcp.json'), JSON.stringify({ mcpServers: { 'crafthall-hq': { command: 'node', args: ['${CLAUDE_PLUGIN_ROOT}/scripts/athena.mjs', 'mcp'] } } }));
+  writeFileSync(join(plugin, '.mcp.json'), JSON.stringify({ mcpServers: { 'crafthall-hq': { command: 'node', args: ['${CLAUDE_PLUGIN_ROOT}/scripts/crafthall-hq.mjs', 'mcp'] } } }));
   writeFileSync(
-    join(plugin, 'scripts/athena.mjs'),
+    join(plugin, 'scripts/crafthall-hq.mjs'),
     `import { readdirSync, writeFileSync, existsSync } from 'node:fs';
 const cfg = process.env.CRAFTHALL_HQ_CONFIG_DIR;
-const hqVars = Object.keys(process.env).filter((k) => (k.startsWith('CRAFTHALL_HQ_') || k.startsWith('ATHENA_')) && k !== 'CRAFTHALL_HQ_CONFIG_DIR');
+const hqVars = Object.keys(process.env).filter((k) => k.startsWith('CRAFTHALL_HQ_') && k !== 'CRAFTHALL_HQ_CONFIG_DIR');
 writeFileSync(${JSON.stringify(seen)}, JSON.stringify({ argv: process.argv.slice(2), hqVars, configEmpty: !!cfg && existsSync(cfg) && readdirSync(cfg).length === 0, agentRules: existsSync('CLAUDE.md') }));
-console.log(JSON.stringify({ verdict: 'OK – no conflicts or broken handoffs found in 1 agent (checked on this machine, nothing sent)', exitCode: 0, offline: true, scope: { athenaVersion: '0.1.0-test', agents: 1 }, result: { rulesBuild: 'testbuild', quality: { findings: [] } } }));
+console.log(JSON.stringify({ verdict: 'OK – no conflicts or broken handoffs found in 1 agent (checked on this machine, nothing sent)', exitCode: 0, offline: true, scope: { hqVersion: '0.1.0-test', agents: 1 }, result: { rulesBuild: 'testbuild', quality: { findings: [] } } }));
 `,
   );
   mkdirSync(join(claudeDir, 'plugins'), { recursive: true });
@@ -127,7 +127,7 @@ describe('canon init end to end in a clean repository', () => {
     const seen = join(temp('hub-init-seen-'), 'seen.json');
     fakeHqPlugin(claude, seen);
     // A signed-in developer's shell: a key, an engine and consent are set – none may reach HQ.
-    const env = userEnv(claude, { CRAFTHALL_HQ_KEY: 'secret', CRAFTHALL_HQ_ENGINE_URL: 'https://engine.example.invalid', ATHENA_CONSENT: 'yes' });
+    const env = userEnv(claude, { CRAFTHALL_HQ_KEY: 'secret', CRAFTHALL_HQ_ENGINE_URL: 'https://engine.example.invalid', CRAFTHALL_HQ_CONSENT: 'yes' });
     expect(sh(dir, env, ['git', 'init', '-q']).code).toBe(0);
     mkdirSync(join(dir, '.claude/agents'), { recursive: true });
     writeFileSync(join(dir, '.claude/agents/dev.md'), '---\nname: dev\ndescription: Builds things.\n---\nYou build things. Never deploy.\n');

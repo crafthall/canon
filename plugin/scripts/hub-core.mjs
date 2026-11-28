@@ -1316,7 +1316,7 @@ function pluginScript(installPath) {
     }
   } catch {
   }
-  const f = join(installPath, "scripts", "athena.mjs");
+  const f = join(installPath, "scripts", "crafthall-hq.mjs");
   return existsSync(f) ? f : null;
 }
 var asCommand = (file) => /\.(m|c)?js$/.test(file) ? { command: process.execPath, args: [file] } : { command: file, args: [] };
@@ -1346,7 +1346,7 @@ function findHq({ flag = null, env = process.env, cwd = process.cwd() } = {}) {
 }
 function offlineHqEnv(env, configDir) {
   const out = {};
-  for (const [k, v] of Object.entries(env)) if (!k.startsWith("CRAFTHALL_HQ_") && !k.startsWith("ATHENA_")) out[k] = v;
+  for (const [k, v] of Object.entries(env)) if (!k.startsWith("CRAFTHALL_HQ_")) out[k] = v;
   out.CRAFTHALL_HQ_CONFIG_DIR = configDir;
   return out;
 }
@@ -1367,7 +1367,7 @@ function hqOutcome(status, stdout, stderr) {
     const e = (f.evidence || [])[0];
     return `${String(f.title ?? "hint")}${e?.file ? ` \u2013 ${String(e.file)}${e.line != null ? `:${String(e.line)}` : ""}` : ""}`;
   });
-  return { kind: "checked", exitCode: status, verdict: j.verdict, version: str2(j.scope?.athenaVersion), rulesBuild: str2(j.result?.rulesBuild), agents: typeof j.scope?.agents === "number" ? j.scope.agents : null, hints };
+  return { kind: "checked", exitCode: status, verdict: j.verdict, version: str2(j.scope?.hqVersion), rulesBuild: str2(j.result?.rulesBuild), agents: typeof j.scope?.agents === "number" ? j.scope.agents : null, hints };
 }
 function runHqOffline(root, loc, env = process.env) {
   const config = mkdtempSync(join(tmpdir(), "hub-init-hq-"));

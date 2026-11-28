@@ -274,7 +274,7 @@ describe('README record', () => {
 describe('HQ runner (pure parts)', () => {
   const json = (o: object) => JSON.stringify(o);
   it('reads the --json answer: verdict, version, rules build, top hints with file:line', () => {
-    const out = json({ verdict: 'OK – fine (checked on this machine, nothing sent)', exitCode: 0, offline: true, scope: { athenaVersion: '0.1.0+x', agents: 3 }, result: { rulesBuild: 'r1', quality: { findings: [{ title: 'No boundaries', evidence: [{ file: '.claude/agents/a.md', line: 1 }] }, { title: 'Bare' }] } } });
+    const out = json({ verdict: 'OK – fine (checked on this machine, nothing sent)', exitCode: 0, offline: true, scope: { hqVersion: '0.1.0+x', agents: 3 }, result: { rulesBuild: 'r1', quality: { findings: [{ title: 'No boundaries', evidence: [{ file: '.claude/agents/a.md', line: 1 }] }, { title: 'Bare' }] } } });
     expect(hqOutcome(0, out, '')).toEqual({ kind: 'checked', exitCode: 0, verdict: 'OK – fine (checked on this machine, nothing sent)', version: '0.1.0+x', rulesBuild: 'r1', agents: 3, hints: ['No boundaries – .claude/agents/a.md:1', 'Bare'] });
     expect(hqOutcome(1, out, '')).toMatchObject({ kind: 'checked', exitCode: 1 });
   });
@@ -289,8 +289,8 @@ describe('HQ runner (pure parts)', () => {
     expect(hqOutcome(null, '', '')).toEqual({ kind: 'failed', message: 'Crafthall HQ exited with a signal' });
   });
 
-  it('offline environment: every CRAFTHALL_HQ_* and ATHENA_* setting removed, a fresh config folder set, the rest kept', () => {
-    const env = offlineHqEnv({ PATH: '/bin', HOME: '/h', CRAFTHALL_HQ_KEY: 'k', CRAFTHALL_HQ_ENGINE_URL: 'https://e', ATHENA_KEY: 'k2', ATHENA_CONSENT: 'yes', CRAFTHALL_HQ_CONFIG_DIR: '/old' }, '/tmp/fresh');
+  it('offline environment: every CRAFTHALL_HQ_* setting removed, a fresh config folder set, the rest kept', () => {
+    const env = offlineHqEnv({ PATH: '/bin', HOME: '/h', CRAFTHALL_HQ_KEY: 'k', CRAFTHALL_HQ_ENGINE_URL: 'https://e', CRAFTHALL_HQ_CONSENT: 'yes', CRAFTHALL_HQ_CONFIG_DIR: '/old' }, '/tmp/fresh');
     expect(env).toEqual({ PATH: '/bin', HOME: '/h', CRAFTHALL_HQ_CONFIG_DIR: '/tmp/fresh' });
   });
 });
@@ -326,14 +326,14 @@ describe('findHq', () => {
     expect(findHq({ env: { CLAUDE_CONFIG_DIR: join(d, 'none'), PATH: join(d, 'empty') } })).toEqual({ missing: 'Crafthall HQ is not installed (no Claude Code plugin crafthall-hq, no crafthall-hq on PATH, no --hq)' });
   });
 
-  it('a plugin without .mcp.json falls back to scripts/athena.mjs; a plugin entry without the script is passed over', () => {
+  it('a plugin without .mcp.json falls back to scripts/crafthall-hq.mjs; a plugin entry without the script is passed over', () => {
     const d = temp();
     const a = join(d, 'a');
     const b = join(d, 'b');
     mkdirSync(join(b, 'scripts'), { recursive: true });
     mkdirSync(join(d, 'plugins'));
-    writeFileSync(join(b, 'scripts/athena.mjs'), '');
+    writeFileSync(join(b, 'scripts/crafthall-hq.mjs'), '');
     writeFileSync(join(d, 'plugins/installed_plugins.json'), JSON.stringify({ plugins: { 'crafthall-hq@a': [{ installPath: a }], 'crafthall-hq@b': [{ installPath: b }] } }));
-    expect(findHq({ env: { CLAUDE_CONFIG_DIR: d, PATH: '' } })).toMatchObject({ via: 'plugin', args: [join(b, 'scripts/athena.mjs')] });
+    expect(findHq({ env: { CLAUDE_CONFIG_DIR: d, PATH: '' } })).toMatchObject({ via: 'plugin', args: [join(b, 'scripts/crafthall-hq.mjs')] });
   });
 });
