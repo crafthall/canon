@@ -4,12 +4,12 @@
 
 This repository is the **framework**: the core package (page layout, lifecycle stages, documentation matrix, health checks, completeness, the readers that build a product from a hub folder, the structure check, the scaffold and the versioned `--json` report – pure TypeScript with no runtime dependencies), the `canon` CLI, the page template, the Claude Code plugin with its skills, the framework docs and a worked example. Every file read goes through one `HubSource`; the disk source is the separate entry `@crafthall/canon/node`, so the main entry runs anywhere.
 
-**Status (2026-11-27): 0.3.0, public, MIT.** Renamed from Crafthall Product Hub (`@crafthall/product-hub`, CLI `hub`) in 0.2.0. Since 0.3.0 the hub lives in `docs/crafthall/canon/` (was `docs/product-hub/`, still read; see [docs/layout.md](docs/layout.md)). Installed as a git dependency pinned to a release tag (no registry); each tag carries a built `dist/` (see [CONTRIBUTING.md](CONTRIBUTING.md) "Releases").
+**Status (2026-11-28): 0.3.2, public, MIT.** Renamed from Crafthall Product Hub (`@crafthall/product-hub`, CLI `hub`) in 0.2.0. Since 0.3.0 the hub lives in `docs/crafthall/canon/` (was `docs/product-hub/`, still read; see [docs/layout.md](docs/layout.md)). Installed as a git dependency pinned to a release tag (no registry); each tag carries a built `dist/` (see [CONTRIBUTING.md](CONTRIBUTING.md) "Releases").
 
 ## Install
 
 ```bash
-npm install --save-dev "git+https://github.com/crafthall/canon.git#v0.3.0"
+npm install --save-dev "git+https://github.com/crafthall/canon.git#v0.3.2"
 npx canon new my-product --stage validation --name "My Product" --pitch "One line"
 npx canon check --all
 ```
